@@ -1,15 +1,13 @@
-require("dotenv").config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const express = require('express');
-const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
 const connectDB = require('./config/db');
 
-// Load env vars
-dotenv.config();
-console.log("EMAIL_USER:", process.env.EMAIL_USER ? " loaded" : "missing");
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "loaded" : "missing");
+// Confirm env loaded
+console.log("✅ KHALTI_KEY loaded:", process.env.KHALTI_SECRET_KEY ? process.env.KHALTI_SECRET_KEY.slice(0, 8) + '...' : '❌ MISSING');
+console.log("✅ EMAIL_USER:", process.env.EMAIL_USER || '❌ missing');
 
 // Connect to database
 connectDB();
@@ -37,6 +35,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
+app.use('/api/orders',  require('./routes/orderRoutes'));
+app.use('/api/rewards', require('./routes/rewardRoutes'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
