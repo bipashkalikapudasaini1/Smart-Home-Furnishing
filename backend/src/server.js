@@ -6,8 +6,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 // Confirm env loaded
-console.log("✅ KHALTI_KEY loaded:", process.env.KHALTI_SECRET_KEY ? process.env.KHALTI_SECRET_KEY.slice(0, 8) + '...' : '❌ MISSING');
-console.log("✅ EMAIL_USER:", process.env.EMAIL_USER || '❌ missing');
+console.log("KHALTI_KEY loaded:", process.env.KHALTI_SECRET_KEY ? process.env.KHALTI_SECRET_KEY.slice(0, 8) + '...' : ' MISSING');
+console.log(" EMAIL_USER:", process.env.EMAIL_USER || ' missing');
 
 // Connect to database
 connectDB();
