@@ -1,27 +1,65 @@
-const Chat = require("../models/Chat");
-const User = require("../models/User");
+const Chat    = require("../models/Chat");
+const User    = require("../models/User");
+const Product = require("../models/Product");
 
 // ─── USER: Start or get existing chat for a product ──────────────────────────
+//
+// Behaviour:
+//   • If customizationDetails is supplied → ALWAYS create a brand-new chat so
+//     every "Send Request" becomes its own history entry.  The details are also
+//     injected as the very first user message so the user sees them as a "sent"
+//     bubble and the admin receives them in the thread.
+//   • If no customizationDetails → reuse an existing open chat (plain chat start).
 exports.startOrGetChat = async (req, res) => {
   try {
     const { productId, productName, customizationDetails } = req.body;
     const userId = req.user.id;
 
-    // Check if a chat already exists for this user + product
-    let chat = await Chat.findOne({ userId, productId, status: "open" });
+    const user = await User.findById(userId);
+    let chat;
 
-    if (!chat) {
-      // Create a new chat
-      const user = await User.findById(userId);
+    if (customizationDetails && customizationDetails.trim()) {
+      // ── New customization request: always a fresh chat entry ──
+      // Fetch the product image so it appears inside the chat bubble
+      const productDoc = await Product.findById(productId).select("images");
+      const imageUrl   = productDoc?.images?.[0] || "";
+
+      const firstMessageText =
+        "📋 Customization Request:\n\n" + customizationDetails.trim();
+
       chat = await Chat.create({
         userId,
         productId,
         userName: user.name,
         userEmail: user.email,
         productName,
-        customizationDetails: customizationDetails || "",
-        messages: [],
+        customizationDetails: customizationDetails.trim(),
+        // Pre-load the request as the opening user message (with product image)
+        messages: [
+          {
+            sender:     "user",
+            senderName: user.name,
+            text:       firstMessageText,
+            imageUrl:   imageUrl,
+            timestamp:  new Date(),
+          },
+        ],
+        hasUnreadAdmin: true, // admin has an unread message immediately
       });
+    } else {
+      // ── Plain chat start: reuse existing open chat or create a new one ──
+      chat = await Chat.findOne({ userId, productId, status: "open" });
+      if (!chat) {
+        chat = await Chat.create({
+          userId,
+          productId,
+          userName: user.name,
+          userEmail: user.email,
+          productName,
+          customizationDetails: "",
+          messages: [],
+        });
+      }
     }
 
     res.status(200).json({ success: true, data: chat });
@@ -232,6 +270,61 @@ exports.closeChat = async (req, res) => {
     res.status(200).json({ success: true, data: chat });
   } catch (err) {
     console.error("closeChat error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ─── ADMIN: Confirm custom order — set agreed price & notify user ─────────────
+// POST /api/chat/admin/:chatId/confirm-order
+// body: { agreedPrice: Number, adminNote?: String }
+exports.confirmCustomOrder = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const { agreedPrice, adminNote } = req.body;
+
+    if (!agreedPrice || isNaN(Number(agreedPrice)) || Number(agreedPrice) <= 0) {
+      return res.status(400).json({ success: false, message: "Please provide a valid agreed price." });
+    }
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ success: false, message: "Chat not found." });
+    }
+    if (chat.status === "closed") {
+      return res.status(400).json({ success: false, message: "Cannot confirm a closed chat." });
+    }
+    if (chat.confirmedPrice) {
+      return res.status(400).json({ success: false, message: "This order has already been confirmed." });
+    }
+
+    // Save confirmed price + timestamp
+    chat.confirmedPrice = Number(agreedPrice);
+    chat.confirmedAt    = new Date();
+
+    // Auto-message to user explaining what to do next
+    const noteText = adminNote ? `\n\n📝 Note from admin: ${adminNote}` : "";
+    chat.messages.push({
+      sender:     "admin",
+      senderName: "Admin",
+      text:
+        `✅ Your customization request has been confirmed!\n\n` +
+        `💰 Agreed Price: NPR ${Number(agreedPrice).toLocaleString()}\n` +
+        `📦 Delivery charge of NPR 180 will be added at checkout.` +
+        noteText +
+        `\n\n👇 Please click the "Pay Now" button below to complete your order.`,
+      timestamp: new Date(),
+    });
+    chat.hasUnreadUser = true;
+
+    await chat.save();
+
+    const populated = await Chat.findById(chatId)
+      .populate("productId", "name images price category brand description discount")
+      .populate("userId", "name email phone address");
+
+    res.status(200).json({ success: true, message: "Custom order confirmed!", data: populated });
+  } catch (err) {
+    console.error("confirmCustomOrder error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
