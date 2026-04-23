@@ -133,14 +133,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-
-
 //  FORGOT PASSWORD: send code to email (admin + user)
-
-
-// @desc    Send reset code to email
-// @route   POST /api/auth/forgot-password
-// @access  Public
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
