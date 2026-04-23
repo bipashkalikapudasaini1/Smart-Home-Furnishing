@@ -2,28 +2,35 @@ const axios  = require('axios');
 const Order  = require('../models/Order');
 const User   = require('../models/User');
 
-// ─────────────────────────────────────────────
+
 // Khalti config
-// ─────────────────────────────────────────────
+
 const KHALTI_SECRET_KEY = process.env.KHALTI_SECRET_KEY || 'test_secret_key_f59e8b7d18b4499ca40f68195a846e9b';
 const KHALTI_API_URL    = process.env.KHALTI_API_URL    || 'https://a.khalti.com/api/v2/';
 const FRONTEND_URL      = process.env.FRONTEND_URL      || 'http://localhost:3000';
 const WEBSITE_URL       = process.env.WEBSITE_URL       || 'http://localhost:3000';
-const DELIVERY_CHARGE   = parseInt(process.env.DELIVERY_CHARGE || '500', 10);
+const DELIVERY_CHARGE   = parseInt(process.env.DELIVERY_CHARGE || '180', 10);
 
 const khaltiHeaders = () => ({
   Authorization: `Key ${KHALTI_SECRET_KEY}`,
   'Content-Type': 'application/json'
 });
 
-// ─────────────────────────────────────────────
+
 // @desc   Create order + initiate Khalti payment
 // @route  POST /api/orders
 // @access Private
-// ─────────────────────────────────────────────
+
+// Reward Points constants
+
+const RUPEES_PER_POINT = 100;    // earn 1 point per Rs. 100 spent (on subtotal)
+const POINTS_VALUE     = 1;      // 1 point = Rs. 1 discount
+const MIN_REDEEM       = 50;     // minimum points needed to redeem
+const MAX_REDEEM_RATIO = 0.5;    // max 50% of subtotal can be paid via reward points
+
 exports.createOrder = async (req, res) => {
   try {
-    const { shippingAddress, buyNowItem } = req.body;
+    const { shippingAddress, buyNowItem, customOrderData, rewardPointsToRedeem } = req.body;
 
     if (!shippingAddress?.name || !shippingAddress?.phone ||
         !shippingAddress?.street || !shippingAddress?.city) {
@@ -35,8 +42,42 @@ exports.createOrder = async (req, res) => {
 
     const items = [];
     let subtotal = 0;
+    let isCustomOrder = false;
+    let chatId = null;
 
-    if (buyNowItem) {
+    if (customOrderData) {
+      // ── Custom Order from Live Chat confirmation ──────────────────────────
+      // The price was agreed in the chat; we use it directly (no discount logic).
+      const Chat    = require('../models/Chat');
+      const Product = require('../models/Product');
+
+      const chat = await Chat.findById(customOrderData.chatId);
+      if (!chat) return res.status(404).json({ success: false, message: 'Chat not found' });
+      if (!chat.confirmedPrice) return res.status(400).json({ success: false, message: 'Admin has not confirmed a price for this chat yet.' });
+      if (chat.linkedOrderId)   return res.status(400).json({ success: false, message: 'An order has already been created for this chat.' });
+
+      const product = await Product.findById(customOrderData.productId).select('name images _id');
+      if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+      const confirmedPrice = parseFloat(chat.confirmedPrice.toFixed(2));
+
+      items.push({
+        product:           product._id,
+        name:              chat.productName || product.name,
+        price:             confirmedPrice,
+        quantity:          1,
+        selectedColor:     '',
+        selectedSize:      '',
+        selectedFabric:    '',
+        customizationNote: chat.customizationDetails || '',
+        image:             product.images?.[0] || ''
+      });
+
+      subtotal        = confirmedPrice;
+      isCustomOrder   = true;
+      chatId          = chat._id;
+
+    } else if (buyNowItem) {
       // ── Buy Now: single product, skip cart ──
       const Product = require('../models/Product');
       const product = await Product.findById(buyNowItem.productId).select('name price discount images stock');
@@ -104,19 +145,48 @@ exports.createOrder = async (req, res) => {
       }
     }
 
-    subtotal          = parseFloat(subtotal.toFixed(2));
-    const totalAmount = parseFloat((subtotal + DELIVERY_CHARGE).toFixed(2));
+    subtotal = parseFloat(subtotal.toFixed(2));
+
+    // ── Reward Points: Redemption ──
+    let rewardDiscount       = 0;
+    let rewardPointsRedeemed = 0;
+
+    if (rewardPointsToRedeem && rewardPointsToRedeem > 0) {
+      const userForRewards  = await User.findById(req.user._id).select('rewardPoints');
+      const availablePoints = userForRewards?.rewardPoints || 0;
+      const maxDiscount     = Math.floor(subtotal * MAX_REDEEM_RATIO);
+      const pointsToUse     = Math.min(
+        Math.floor(rewardPointsToRedeem),
+        availablePoints,
+        maxDiscount
+      );
+      if (pointsToUse >= MIN_REDEEM) {
+        rewardPointsRedeemed = pointsToUse;
+        rewardDiscount       = parseFloat((pointsToUse * POINTS_VALUE).toFixed(2));
+      }
+    }
+
+    const totalAmount = parseFloat((subtotal + DELIVERY_CHARGE - rewardDiscount).toFixed(2));
 
     const order = await Order.create({
       user: req.user._id,
       items,
       shippingAddress,
       subtotal,
-      deliveryCharge: DELIVERY_CHARGE,
+      deliveryCharge:       DELIVERY_CHARGE,
       totalAmount,
+      rewardPointsRedeemed,
+      rewardDiscount,
       paymentStatus:  'pending',
-      deliveryStatus: 'placed'
+      deliveryStatus: 'placed',
+      isCustomOrder,
+      chatId:         chatId || null
     });
+
+    // Deduct redeemed points immediately so user cannot double-spend
+    if (rewardPointsRedeemed > 0) {
+      await User.findByIdAndUpdate(req.user._id, { $inc: { rewardPoints: -rewardPointsRedeemed } });
+    }
 
     await User.findByIdAndUpdate(req.user._id, { $push: { orderHistory: order._id } });
 
@@ -169,11 +239,11 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+
 // @desc   Verify Khalti payment
 // @route  POST /api/orders/verify
 // @access Private
-// ─────────────────────────────────────────────
+
 exports.verifyKhaltiPayment = async (req, res) => {
   try {
     const { pidx } = req.body;
@@ -211,14 +281,49 @@ exports.verifyKhaltiPayment = async (req, res) => {
       order.khaltiMobile        = mobile || '';
       await order.save();
 
-      // Reduce stock
+      // Reduce stock & increment purchaseCount for recommendation engine
       const Product = require('../models/Product');
+      const { refreshTrendingScore } = require('../services/recommendationService');
       for (const item of order.items) {
-        await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: {
+            stock:         -item.quantity,
+            purchaseCount:  item.quantity,  // track units sold for trending
+          }
+        });
+        // Refresh trendingScore asynchronously
+        setImmediate(() => refreshTrendingScore(item.product));
       }
 
       // Clear cart
       await User.findByIdAndUpdate(order.user, { $set: { cart: [] } });
+
+      // ── Award Reward Points: 1 point per Rs. 100 spent (subtotal minus reward discount) ──
+      const effectiveSpend  = Math.max(0, (order.subtotal || 0) - (order.rewardDiscount || 0));
+      const pointsEarned    = Math.floor(effectiveSpend / RUPEES_PER_POINT);
+      if (pointsEarned > 0) {
+        order.rewardPointsEarned = pointsEarned;
+        await order.save();
+        await User.findByIdAndUpdate(order.user, { $inc: { rewardPoints: pointsEarned } });
+      }
+
+      // ── Link chat to order (custom orders only) ────────────────────────
+      if (order.isCustomOrder && order.chatId) {
+        const Chat = require('../models/Chat');
+        await Chat.findByIdAndUpdate(order.chatId, {
+          linkedOrderId: order._id,
+          status: 'closed',             // chat is done — order is placed
+          hasUnreadUser: true,          // notify user in chat
+          $push: {
+            messages: {
+              sender:     'admin',
+              senderName: 'Admin',
+              text:       `🎉 Payment received! Your custom order has been placed successfully. Order ID: #${order._id.toString().slice(-8).toUpperCase()}\n\nWe will keep you updated on production and delivery. Track your order in "My Orders".`,
+              timestamp:  new Date(),
+            }
+          }
+        });
+      }
 
       return res.status(200).json({
         success: true,
@@ -229,7 +334,9 @@ exports.verifyKhaltiPayment = async (req, res) => {
           deliveryStatus:      'placed',
           totalAmount:         order.totalAmount,
           khaltiTransactionId: transaction_id,
-          fee:                 fee ? fee / 100 : 0
+          fee:                 fee ? fee / 100 : 0,
+          rewardPointsEarned:  pointsEarned,
+          rewardDiscount:      order.rewardDiscount || 0
         }
       });
 
@@ -256,10 +363,10 @@ exports.verifyKhaltiPayment = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+
 // @desc   User's orders
 // @route  GET /api/orders/my
-// ─────────────────────────────────────────────
+
 exports.getUserOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id })
@@ -271,10 +378,10 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+
 // @desc   Single order
 // @route  GET /api/orders/:id
-// ─────────────────────────────────────────────
+
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -293,11 +400,11 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+
 // @desc   Cancel an order (user)
 // @route  PUT /api/orders/:id/cancel
 // @access Private
-// ─────────────────────────────────────────────
+
 exports.cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -327,11 +434,26 @@ exports.cancelOrder = async (req, res) => {
     order.cancelledAt    = new Date();
     await order.save();
 
-    // If order was paid, restore stock
+    // If order was paid, restore stock / purchaseCount and adjust reward points
     if (wasCompleted) {
       const Product = require('../models/Product');
+      const { refreshTrendingScore } = require('../services/recommendationService');
       for (const item of order.items) {
-        await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: {
+            stock:         item.quantity,
+            purchaseCount: -item.quantity,  // reverse the units sold count
+          }
+        });
+        setImmediate(() => refreshTrendingScore(item.product));
+      }
+
+      // ── Reward Points reversal ──
+      // Restore redeemed points (user spent them but now order is cancelled)
+      // Deduct earned points (user earned them but order is now reversed)
+      const pointsToRestore = (order.rewardPointsRedeemed || 0) - (order.rewardPointsEarned || 0);
+      if (pointsToRestore !== 0) {
+        await User.findByIdAndUpdate(order.user, { $inc: { rewardPoints: pointsToRestore } });
       }
     }
 
@@ -348,9 +470,9 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
+
 // ADMIN
-// ─────────────────────────────────────────────
+
 exports.getAllOrders = async (req, res) => {
   try {
     const { paymentStatus, deliveryStatus, page = 1, limit = 20 } = req.query;
@@ -396,6 +518,45 @@ exports.updateDeliveryStatus = async (req, res) => {
     await order.save();
 
     res.status(200).json({ success: true, message: `Status updated to "${deliveryStatus}"`, data: order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+// Admin: manually adjust a user's reward points
+// PUT /orders/admin/users/:userId/reward-points
+// body: { action: 'add'|'deduct'|'set', points: Number, reason: String }
+
+exports.adjustRewardPoints = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { action, points, reason } = req.body;
+
+    if (!['add', 'deduct', 'set'].includes(action)) {
+      return res.status(400).json({ success: false, message: 'action must be add, deduct, or set' });
+    }
+    const pts = parseInt(points);
+    if (isNaN(pts) || pts < 0) {
+      return res.status(400).json({ success: false, message: 'points must be a non-negative integer' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    let newBalance;
+    if (action === 'add')    newBalance = user.rewardPoints + pts;
+    if (action === 'deduct') newBalance = Math.max(0, user.rewardPoints - pts);
+    if (action === 'set')    newBalance = pts;
+
+    user.rewardPoints = newBalance;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Reward points updated. New balance: ${newBalance} pts.`,
+      data: { userId, rewardPoints: newBalance, reason: reason || '' }
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
