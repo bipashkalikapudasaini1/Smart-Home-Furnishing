@@ -18,7 +18,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Enable CORS
+//Allows the frontend (React) to talk to this backend
+//Without this, browser blocks the request
 app.use(cors());
 
 // Serve uploaded product images as static files
@@ -31,14 +32,15 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/cart', require('./routes/cartRoutes'));
-app.use('/api/chat', require('./routes/chatRoutes'));
-app.use('/api/orders',  require('./routes/orderRoutes'));
-app.use('/api/rewards', require('./routes/rewardRoutes'));
+app.use('/api/auth',            require('./routes/authRoutes'));
+app.use('/api/products',        require('./routes/productRoutes'));
+app.use('/api/cart',            require('./routes/cartRoutes'));
+app.use('/api/chat',            require('./routes/chatRoutes'));
+app.use('/api/orders',          require('./routes/orderRoutes'));
+app.use('/api/rewards',         require('./routes/rewardRoutes'));
+app.use('/api/recommendations', require('./routes/recommendationRoutes'));
 
-// Health check route
+// Health check route -> check to confirm server is running
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
