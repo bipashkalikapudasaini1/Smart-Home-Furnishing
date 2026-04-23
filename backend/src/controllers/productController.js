@@ -1,4 +1,7 @@
-const Product = require('../models/Product');
+const Product            = require('../models/Product');
+const SearchLog          = require('../models/SearchLog');
+const { refreshTrendingScore } = require('../services/recommendationService');
+const { rankByTFIDF }          = require('../services/aiRecommendationService');
 
 // @desc    Get all products with filters
 // @route   GET /api/products
@@ -55,16 +58,74 @@ exports.getProducts = async (req, res) => {
       query.availableFabrics = { $in: [fabric] };
     }
 
-    // Search by name or description
+    // ── Flexible multi-word search ────────────────────────────────────────
+    // Problem with MongoDB $text: it tokenises by whitespace, so "bed sheet"
+    // never matches a product named "Bedsheet" (one token), and "bedsheet"
+    // never matches "Bed Sheet" (two tokens).
+    //
+    // Strategy — try all three patterns so spacing differences are bridged:
+    //   1. Exact phrase   : /bed sheet/i  → "Bed Sheet"
+    //   2. No-space join  : /bedsheet/i   → "Bedsheet"
+    //   3. All words AND  : /bed/i & /sheet/i anywhere in name/description
     if (search) {
-      query.$text = { $search: search };
+      const esc   = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const terms = search.trim().split(/\s+/).filter(Boolean);
+
+      if (terms.length === 1) {
+        // Single word — simple contains across name, description, category, brand
+        const pat = esc(terms[0]);
+        query.$or = [
+          { name:        { $regex: pat, $options: 'i' } },
+          { description: { $regex: pat, $options: 'i' } },
+          { category:    { $regex: pat, $options: 'i' } },
+          { brand:       { $regex: pat, $options: 'i' } },
+        ];
+      } else {
+        // Multi-word: run all three strategies in a single $or
+        const exactPat   = esc(terms.join(' '));   // "bed sheet"
+        const noSpacePat = esc(terms.join(''));     // "bedsheet"
+        // Every word must appear somewhere in the name (order-independent)
+        const allWordsInName = {
+          $and: terms.map(t => ({ name: { $regex: esc(t), $options: 'i' } })),
+        };
+        // Every word must appear somewhere in the description (fallback)
+        const allWordsInDesc = {
+          $and: terms.map(t => ({ description: { $regex: esc(t), $options: 'i' } })),
+        };
+
+        query.$or = [
+          { name: { $regex: exactPat,   $options: 'i' } },  // "Bed Sheet" exact
+          { name: { $regex: noSpacePat, $options: 'i' } },  // "Bedsheet" one-word
+          allWordsInName,                                     // "Bed" AND "Sheet" anywhere
+          allWordsInDesc,                                     // description fallback
+        ];
+      }
     }
 
     // Execute query
-    const products = await Product.find(query)
+    let products = await Product.find(query)
       .sort(sort)
       .limit(limit * 1)
       .skip((page - 1) * limit);
+
+    // ── TF-IDF Re-ranking for search queries ─────────────────────────────────
+    // When the user has typed a search query, re-rank the MongoDB results by
+    // TF-IDF relevance score so that the most semantically relevant products
+    // appear first rather than just the most recently added ones.
+    //
+    // TF-IDF Formula (implemented in aiRecommendationService.rankByTFIDF):
+    //   TF(t,d)  = occurrences of term t in document d / total terms in d
+    //   IDF(t)   = log(1 + N / (1 + df(t)))   [smoothed, avoids ÷0]
+    //   score(d) = Σ TF(t,d) × IDF(t)  for each query term t
+    // Product name is weighted 2× by duplicating it in the "document".
+    if (search && search.trim() && products.length > 1) {
+      try {
+        products = rankByTFIDF(products, search.trim());
+      } catch (tfidfErr) {
+        // Non-critical — if TF-IDF fails, keep original MongoDB order
+        console.warn('TF-IDF re-ranking skipped:', tfidfErr.message);
+      }
+    }
 
     // Get total count for pagination
     const count = await Product.countDocuments(query);
@@ -77,6 +138,47 @@ exports.getProducts = async (req, res) => {
       currentPage: Number(page),
       data: products
     });
+
+    // ── Background: log search & update searchCount on matched products ────
+    // This runs after the response is sent so the client is never delayed.
+    if (search && search.trim()) {
+      setImmediate(async () => {
+        try {
+          // Extract optional user id from the Authorization header (soft auth)
+          let userId = null;
+          const authHeader = req.headers?.authorization;
+          if (authHeader && authHeader.startsWith('Bearer ')) {
+            const jwt = require('jsonwebtoken');
+            try {
+              const decoded = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+              userId = decoded?.id || null;
+            } catch (_) { /* ignore invalid tokens */ }
+          }
+
+          await SearchLog.create({
+            user:            userId,
+            query:           search.trim().toLowerCase(),
+            resultsCount:    products.length,
+            categoryContext: category || null,
+          });
+
+          // Increment searchCount on the returned products (non-blocking)
+          if (products.length > 0) {
+            const productIds = products.map(p => p._id);
+            await Product.updateMany(
+              { _id: { $in: productIds } },
+              { $inc: { searchCount: 1 } }
+            );
+            // Refresh trendingScore for each affected product
+            for (const pid of productIds) {
+              await refreshTrendingScore(pid);
+            }
+          }
+        } catch (err) {
+          console.error('Search logging error:', err.message);
+        }
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
