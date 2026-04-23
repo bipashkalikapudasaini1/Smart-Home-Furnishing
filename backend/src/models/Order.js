@@ -9,10 +9,11 @@ const orderItemSchema = new mongoose.Schema({
   name:           { type: String, required: true },
   price:          { type: Number, required: true },
   quantity:       { type: Number, required: true, min: 1 },
-  selectedColor:  { type: String, default: '' },
-  selectedSize:   { type: String, default: '' },
-  selectedFabric: { type: String, default: '' },
-  image:          { type: String, default: '' }
+  selectedColor:       { type: String, default: '' },
+  selectedSize:        { type: String, default: '' },
+  selectedFabric:      { type: String, default: '' },
+  customizationNote:   { type: String, default: '' }, // full specs from live-chat custom order
+  image:               { type: String, default: '' }
 }, { _id: true });
 
 const orderSchema = new mongoose.Schema({
@@ -61,7 +62,16 @@ const orderSchema = new mongoose.Schema({
   cancelledAt:  { type: Date, default: null },
 
   adminNote:      { type: String, default: '' },
-  trackingNumber: { type: String, default: '' }
+  trackingNumber: { type: String, default: '' },
+
+  // Reward Points
+  rewardPointsEarned:   { type: Number, default: 0 }, // points credited to user after payment
+  rewardPointsRedeemed: { type: Number, default: 0 }, // points user spent as discount
+  rewardDiscount:       { type: Number, default: 0 }, // Rs. amount discounted via reward points
+
+  // ── Custom Order (from Live Chat) ───────────────────────────────────────
+  isCustomOrder: { type: Boolean, default: false },       // true when created from chat confirmation
+  chatId:        { type: mongoose.Schema.Types.ObjectId, ref: 'Chat', default: null } // the originating chat
 
 }, { timestamps: true });
 
