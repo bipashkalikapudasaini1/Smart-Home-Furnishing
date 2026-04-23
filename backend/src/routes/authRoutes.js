@@ -8,7 +8,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 
-// ✅ Forgot Password routes (admin + user)
+//  Forgot Password routes (admin + user)
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
