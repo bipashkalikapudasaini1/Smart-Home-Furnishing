@@ -87,7 +87,37 @@ const productSchema = new mongoose.Schema({
   isCustomizable: {
     type: Boolean,
     default: false
-  }
+  },
+
+  // ── Recommendation / Engagement Counters ─────────────────────────────────
+  // These are incremented asynchronously and are intentionally denormalised
+  // onto the Product document so trending queries need no expensive aggregation.
+
+  // Total times this product appeared in a search result set
+  searchCount: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  // Total page-view events (from ProductInteraction logs)
+  viewCount: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  // Total units sold across all verified (paid) orders
+  purchaseCount: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  // Pre-computed trending score: refreshed on every interaction
+  // Formula: purchaseCount * 3 + viewCount * 0.5 + searchCount * 1
+  trendingScore: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
 }, {
   timestamps: true
 });
@@ -96,5 +126,9 @@ const productSchema = new mongoose.Schema({
 productSchema.index({ name: 'text', description: 'text' });
 productSchema.index({ category: 1, price: 1 });
 productSchema.index({ brand: 1 });
+// Recommendation engine indexes
+productSchema.index({ trendingScore: -1 });
+productSchema.index({ purchaseCount: -1 });
+productSchema.index({ viewCount: -1 });
 
 module.exports = mongoose.model('Product', productSchema);
