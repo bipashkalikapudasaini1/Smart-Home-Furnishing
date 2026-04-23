@@ -11,9 +11,10 @@ const {
   closeChat,
   deleteMessage,
   deleteChat,
+  confirmCustomOrder,
 } = require("../controllers/chatController");
 
-// ── User routes (requires login) ──────────────────────────────────────────────
+//  User routes (requires login)
 
 // POST /api/chat/start  → start or get existing chat for a product
 router.post("/start", protect, startOrGetChat);
@@ -24,7 +25,7 @@ router.get("/:chatId", protect, getUserChat);
 // POST /api/chat/:chatId/message  → user sends a message
 router.post("/:chatId/message", protect, sendUserMessage);
 
-// ── Admin routes (requires admin role) ───────────────────────────────────────
+// Admin routes (requires admin role) 
 
 // GET  /api/chat/admin/all          → get all chats
 router.get("/admin/all", protect, adminOnly, getAllChats);
@@ -37,6 +38,9 @@ router.post("/admin/:chatId/reply", protect, adminOnly, sendAdminMessage);
 
 // PUT  /api/chat/admin/:chatId/close → admin closes chat
 router.put("/admin/:chatId/close", protect, adminOnly, closeChat);
+
+// POST /api/chat/admin/:chatId/confirm-order → admin confirms custom order with price
+router.post("/admin/:chatId/confirm-order", protect, adminOnly, confirmCustomOrder);
 
 // DELETE /api/chat/admin/:chatId/messages/:messageId → admin deletes a message
 router.delete("/admin/:chatId/messages/:messageId", protect, adminOnly, deleteMessage);
