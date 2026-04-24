@@ -1,0 +1,302 @@
+/* ── Admin Users Page ──────────────────────────────── */
+.admin-users-page {
+  padding: 32px 16px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.au-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.6rem; font-weight: 700; color: #1a1a1a;
+  margin-bottom: 22px;
+}
+
+/* ── Summary ── */
+.au-summary-strip {
+  display: flex; align-items: center; gap: 20px;
+  padding: 14px 18px; background: #f9fafb;
+  border: 1px solid #e5e7eb; border-radius: 10px;
+  margin-bottom: 20px; font-size: 0.9rem; color: #555;
+}
+.au-summary-item { display: flex; align-items: center; gap: 8px; }
+
+/* ── Search ── */
+.au-search-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: #fff;
+  border: 1px solid #d1d5db; border-radius: 10px;
+  margin-bottom: 20px; max-width: 400px;
+}
+.au-search-bar input {
+  flex: 1; border: none; outline: none;
+  font-size: 0.92rem; background: transparent; color: #1a1a1a;
+}
+
+.au-error {
+  background: #fff3f3; border: 1px solid #f8b4b4; color: #c0392b;
+  padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem;
+}
+
+/* ── Table ── */
+.au-table-wrapper {
+  overflow-x: auto;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.au-table {
+  width: 100%; border-collapse: collapse; min-width: 700px;
+}
+
+.au-table thead { background: #f9fafb; }
+.au-table th {
+  text-align: left; padding: 13px 16px;
+  font-size: 0.78rem; font-weight: 700; color: #888;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  border-bottom: 1px solid #e5e7eb; white-space: nowrap;
+}
+
+.au-table td {
+  padding: 13px 16px; font-size: 0.88rem; color: #555;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.au-table tbody tr:hover { background: #fafafa; }
+.au-table tbody tr:last-child td { border-bottom: none; }
+.au-row-selected { background: #f0fdf7 !important; }
+
+.au-center { text-align: center; color: #aaa; padding: 30px; }
+
+/* Cell styles */
+.au-user-cell { display: flex; align-items: center; gap: 10px; }
+.au-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #60d0a0; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.95rem; flex-shrink: 0;
+}
+.au-avatar.lg { width: 48px; height: 48px; font-size: 1.2rem; }
+
+.au-name { font-weight: 600; color: #1a1a1a; }
+.au-email { color: #888; }
+.au-spent { font-weight: 700; color: #2ecc71; }
+.au-order-count { font-weight: 700; color: #1a1a1a; }
+.au-order-sub { font-size: 0.78rem; color: #aaa; }
+
+.btn-view-user {
+  padding: 6px 14px; background: #4a90e2; color: #fff;
+  border: none; border-radius: 6px; font-size: 0.82rem;
+  font-weight: 600; cursor: pointer; white-space: nowrap;
+  transition: background 0.2s;
+}
+.btn-view-user:hover { background: #357abd; }
+
+/* Pagination */
+.au-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin-top: 22px;
+}
+.au-pagination button {
+  padding: 8px 18px; border: 1px solid #d1d5db; border-radius: 7px;
+  background: #fff; cursor: pointer; font-size: 0.88rem; transition: background 0.15s;
+}
+.au-pagination button:hover:not(:disabled) { background: #f3f4f6; }
+.au-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.au-pagination span { font-size: 0.88rem; color: #555; }
+
+/* ── Side Panel ── */
+.au-side-panel {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 420px; max-width: 95vw;
+  background: #fff; border-left: 1px solid #e5e7eb;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+  overflow-y: auto; z-index: 500;
+  display: flex; flex-direction: column;
+}
+
+.au-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 22px; border-bottom: 1px solid #f0f0f0;
+  position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.au-panel-header h3 { font-size: 1rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+.au-close {
+  background: none; border: none; font-size: 1.1rem; cursor: pointer;
+  color: #aaa; padding: 4px 8px; border-radius: 6px;
+  transition: background 0.15s;
+}
+.au-close:hover { background: #f3f4f6; color: #555; }
+
+.au-panel-loading, .au-panel-error, .au-panel-no-orders {
+  padding: 20px 22px; color: #aaa; font-size: 0.9rem;
+}
+.au-panel-error { color: #c0392b; }
+
+/* Panel user info */
+.au-panel-user {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 22px; background: #f9fafb;
+  border-bottom: 1px solid #f0f0f0;
+}
+.au-panel-name { font-size: 1rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+.au-panel-email { font-size: 0.82rem; color: #888; margin: 2px 0 0; }
+.au-panel-phone { font-size: 0.82rem; color: #888; margin: 2px 0 0; }
+
+/* Stats row */
+.au-panel-stats {
+  display: flex; gap: 20px;
+  padding: 14px 22px; border-bottom: 1px solid #f0f0f0;
+  background: #f0fdf7;
+}
+.au-ps-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.88rem; color: #27ae60;
+}
+
+/* Orders in panel */
+.au-panel-orders {
+  padding: 16px 22px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.au-order-card {
+  border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;
+}
+
+.au-order-head {
+  display: flex; align-items: center; gap: 10px; justify-content: space-between;
+  padding: 12px 14px; cursor: pointer;
+  background: #fafafa; transition: background 0.15s;
+}
+.au-order-head:hover { background: #f3f4f6; }
+
+.au-order-id { font-size: 0.82rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+.au-order-date { font-size: 0.76rem; color: #aaa; margin: 2px 0 0; }
+.au-order-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.au-order-amount { font-size: 0.9rem; font-weight: 700; color: #2ecc71; margin: 0; }
+
+.au-expand-btn {
+  background: none; border: none; cursor: pointer; color: #aaa;
+  padding: 2px; display: flex; align-items: center;
+}
+
+/* Badges */
+.badge {
+  display: inline-block; padding: 3px 9px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 600;
+}
+.badge-green  { background: #e8f8f1; color: #27ae60; }
+.badge-yellow { background: #fef9e7; color: #d4ac0d; }
+.badge-red    { background: #fdedec; color: #c0392b; }
+.badge-gray   { background: #f3f4f6; color: #888; }
+.badge-blue   { background: #eaf3ff; color: #2980b9; }
+.badge-purple { background: #f5eeff; color: #8e44ad; }
+
+/* Order expanded detail */
+.au-order-detail {
+  padding: 12px 14px; border-top: 1px solid #f0f0f0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.au-order-item {
+  display: flex; justify-content: space-between;
+  font-size: 0.82rem; padding: 5px 0;
+  border-bottom: 1px solid #f9f9f9;
+}
+.au-item-name { font-weight: 600; color: #1a1a1a; }
+.au-item-detail { color: #2ecc71; font-weight: 600; }
+
+.au-bill-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.82rem; color: #666;
+  padding: 5px 0; border-bottom: 1px solid #f5f5f5;
+}
+.au-bill-row:last-child { border-bottom: none; }
+.au-bill-row.bold { font-weight: 700; color: #1a1a1a; }
+.au-ref { font-size: 0.72rem; word-break: break-all; text-align: right; }
+
+.au-addr {
+  font-size: 0.8rem; color: #888; margin-top: 4px;
+  padding-top: 8px; border-top: 1px solid #f0f0f0;
+}
+
+/* ── Reward Points Column ── */
+.au-reward-pts {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  color: #92400e;
+  font-size: 0.88rem;
+}
+
+/* ── Reward Points Admin Panel ── */
+.au-rp-panel {
+  background: linear-gradient(135deg, #fffbea, #fef3c7);
+  border: 1.5px solid #f5d94e;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.au-rp-title {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #78350f;
+  margin: 0 0 8px;
+}
+
+.au-rp-balance {
+  font-size: 0.85rem;
+  color: #92400e;
+  margin-bottom: 10px;
+}
+
+.au-rp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.au-rp-select,
+.au-rp-input,
+.au-rp-reason {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+}
+.au-rp-select:focus,
+.au-rp-input:focus,
+.au-rp-reason:focus {
+  border-color: #f59e0b;
+}
+
+.au-rp-btn {
+  padding: 8px 14px;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.au-rp-btn:hover:not(:disabled) { background: #d97706; }
+.au-rp-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.au-rp-msg {
+  font-size: 0.82rem;
+  margin: 6px 0 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.au-rp-msg--ok  { background: #d1fae5; color: #065f46; }
+.au-rp-msg--err { background: #fee2e2; color: #991b1b; }

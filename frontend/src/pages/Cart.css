@@ -1,0 +1,30 @@
+.cart-page { padding: 24px 0; }
+.cart-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+.cart-error { color: #ff6b6b; }
+.cart-empty { display:flex; flex-direction:column; align-items:center; gap:12px; padding:40px 0; opacity:0.9; }
+.cart-grid { display:grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+.cart-items { display:flex; flex-direction:column; gap:12px; }
+.cart-item { display:flex; justify-content:space-between; gap:12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; }
+.cart-item-left { display:flex; gap:12px; align-items:center; }
+.cart-thumb { width:72px; height:72px; border-radius:12px; overflow:hidden; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.2); }
+.cart-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.cart-thumb-placeholder { width:100%; height:100%; }
+.cart-meta { display:flex; flex-direction:column; gap:4px; }
+.cart-title { font-size: 16px; margin:0; }
+.cart-sub { font-size: 13px; opacity:0.8; margin:0; }
+.cart-price { font-weight:600; margin:0; }
+.cart-item-right { display:flex; align-items:center; gap:10px; }
+.qty-control { display:flex; align-items:center; gap:8px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 6px 8px; }
+.qty-btn { background: transparent; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; color: inherit; opacity:0.9; }
+.qty-btn:hover { opacity:1; }
+.qty-value { min-width: 22px; text-align:center; font-weight:600; }
+.remove-btn { background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 8px; cursor:pointer; display:flex; align-items:center; justify-content:center; color: inherit; opacity:0.9; }
+.remove-btn:hover { opacity:1; }
+.cart-summary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 14px; height: fit-content; }
+.summary-row { display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.summary-row.total { border-bottom:none; font-weight:700; }
+.checkout-btn { width: 100%; margin-top: 12px; }
+.summary-note { margin-top: 10px; font-size: 12px; opacity:0.75; line-height: 1.4; }
+@media (max-width: 900px) {
+  .cart-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,143 @@
+/* ── Payment Result Pages ─────────────────────────── */
+.payment-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.payment-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.payment-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 16px 0 8px;
+}
+
+.status-msg {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+}
+
+/* ── Icons ── */
+.status-icon { display: block; margin: 0 auto; }
+.success-icon { color: #2ecc71; }
+.failed-icon { color: #e74c3c; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+  display: block;
+  margin: 0 auto 16px;
+  color: #60d0a0;
+  animation: spin 1.2s linear infinite;
+}
+
+/* ── Details box ── */
+.payment-details {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 20px 0 28px;
+  text-align: left;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-val {
+  font-weight: 600;
+  color: #1a1a1a;
+  word-break: break-all;
+  text-align: right;
+  max-width: 60%;
+}
+
+.detail-val.highlight { color: #2ecc71; font-size: 1rem; }
+
+/* ── Status badge ── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status-badge.placed { background: #e8f8f1; color: #27ae60; }
+
+/* ── Actions ── */
+.payment-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.payment-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  border: none;
+}
+
+.payment-actions .btn-primary {
+  background: #2c3e50;
+  color: #fff;
+}
+.payment-actions .btn-primary:hover { background: #1a2530; transform: translateY(-1px); }
+
+.payment-actions .btn-secondary {
+  background: #f3f4f6;
+  color: #1a1a1a;
+}
+.btn-secondary:hover { background: #e5e7eb; }
+
+/* ── Reward Points in Payment Success ── */
+.reward-used-row .detail-val { color: #15803d; font-weight: 600; }
+.reward-earned-row { background: #fffbea; border-radius: 8px; }
+.reward-earned-val { color: #d97706; font-weight: 700; font-size: 1rem; }
+
+.reward-earned-banner {
+  background: linear-gradient(135deg, #fffbea, #fef3c7);
+  border: 1.5px solid #f5d94e;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 16px 0 4px;
+  font-size: 0.9rem;
+  color: #78350f;
+  text-align: center;
+  line-height: 1.5;
+}

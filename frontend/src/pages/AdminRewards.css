@@ -1,0 +1,254 @@
+/* ── Admin Rewards Page ─────────────────────────────────── */
+.ar-page { padding: 32px 16px 60px; max-width: 1100px; margin: 0 auto; }
+
+.ar-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.6rem; font-weight: 700; color: #1a1a1a; margin-bottom: 24px;
+}
+.ar-title-star { color: #f59e0b; }
+
+/* ── Tabs ── */
+.ar-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #f0f0f0; }
+.ar-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; background: none; border: none;
+  font-size: 0.92rem; font-weight: 600; color: #6b7280;
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: color 0.15s;
+}
+.ar-tab--active { color: #f59e0b; border-bottom-color: #f59e0b; }
+.ar-badge {
+  background: #ef4444; color: #fff; font-size: 0.72rem;
+  font-weight: 700; border-radius: 20px; padding: 1px 7px; margin-left: 4px;
+}
+
+.ar-error { background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+
+/* ── Toolbar ── */
+.ar-toolbar { margin-bottom: 20px; }
+.ar-btn-add {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #f59e0b; color: #fff; border: none; border-radius: 10px;
+  padding: 10px 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  transition: background 0.15s;
+}
+.ar-btn-add:hover { background: #d97706; }
+
+/* ── Items Grid ── */
+.ar-items-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.ar-item-card {
+  background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px;
+  overflow: hidden; transition: box-shadow 0.2s;
+}
+.ar-item-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.1); }
+.ar-item-card--inactive { opacity: 0.55; }
+
+.ar-item-img { position: relative; height: 160px; background: #f9f9f9; }
+.ar-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.ar-img-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center;
+  justify-content: center; color: #d1d5db;
+}
+.ar-inactive-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: #6b7280; color: #fff; font-size: 0.7rem;
+  font-weight: 700; border-radius: 6px; padding: 2px 8px;
+}
+
+.ar-item-body { padding: 12px 14px 8px; }
+.ar-item-name { font-size: 1rem; font-weight: 700; margin: 0 0 4px; color: #111; }
+.ar-item-desc { font-size: 0.8rem; color: #6b7280; margin: 0 0 8px; }
+.ar-item-meta { display: flex; align-items: center; justify-content: space-between; }
+.ar-pts-required {
+  display: flex; align-items: center; gap: 4px;
+  color: #d97706; font-weight: 700; font-size: 0.85rem;
+}
+.ar-pts-required svg { color: #f59e0b; }
+.ar-stock { font-size: 0.78rem; color: #6b7280; }
+
+.ar-item-actions {
+  display: flex; gap: 8px; padding: 10px 14px 14px;
+  border-top: 1px solid #f3f4f6;
+}
+.ar-btn-edit, .ar-btn-del {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 5px; padding: 7px; border: none; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s;
+}
+.ar-btn-edit { background: #eff6ff; color: #2563eb; }
+.ar-btn-edit:hover { background: #dbeafe; }
+.ar-btn-del  { background: #fef2f2; color: #dc2626; }
+.ar-btn-del:hover { background: #fee2e2; }
+
+/* ── Empty ── */
+.ar-empty { text-align: center; padding: 60px 20px; color: #9ca3af; }
+.ar-empty svg { color: #d1d5db; margin-bottom: 12px; }
+.ar-empty p   { font-size: 0.95rem; margin: 0; }
+
+/* ── Claims Table ── */
+.ar-claims-table-wrap { overflow-x: auto; }
+.ar-claims-table { width: 100%; border-collapse: collapse; }
+.ar-claims-table th {
+  background: #f9fafb; text-align: left; padding: 10px 14px;
+  font-size: 0.82rem; color: #6b7280; font-weight: 600;
+  border-bottom: 1px solid #e5e7eb; white-space: nowrap;
+}
+.ar-claims-table td { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+
+/* Item cell */
+.ar-claim-item { display: flex; align-items: center; gap: 8px; }
+.ar-claim-thumb {
+  width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
+  border: 1px solid #e5e7eb; flex-shrink: 0;
+}
+.ar-claim-thumb--placeholder {
+  display: flex; align-items: center; justify-content: center;
+  background: #f3f4f6; color: #9ca3af;
+}
+
+/* Customer cell */
+.ar-claim-uname  { font-weight: 600; font-size: 0.88rem; margin: 0; }
+.ar-claim-uemail { font-size: 0.78rem; color: #6b7280; margin: 0; }
+.ar-claim-uphone { font-size: 0.75rem; color: #9ca3af; margin: 2px 0 0; }
+
+/* Address cell */
+.ar-claim-addr   { font-size: 0.8rem; }
+.ar-addr-name    { font-weight: 600; margin: 0 0 1px; color: #111; font-size: 0.82rem; }
+.ar-addr-phone   { color: #6b7280; margin: 0 0 2px; font-size: 0.78rem; }
+.ar-addr-line    { display: flex; align-items: flex-start; gap: 3px; color: #374151; margin: 0; font-size: 0.78rem; }
+.ar-addr-line svg { flex-shrink: 0; color: #9ca3af; margin-top: 2px; }
+.ar-addr-empty   { color: #d1d5db; font-size: 0.82rem; }
+.ar-tracking-num {
+  display: flex; align-items: center; gap: 3px; font-size: 0.75rem;
+  color: #7c3aed; margin-top: 4px; font-weight: 600;
+}
+.ar-tracking-num svg { flex-shrink: 0; }
+
+/* Status cell */
+.ar-claim-note { font-size: 0.75rem; color: #6b7280; margin: 4px 0 0; font-style: italic; }
+
+/* ── Delivery status badges ── */
+.ar-status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+}
+.ar-d-placed     { background: #eff6ff; color: #1d4ed8; }
+.ar-d-processing { background: #fef3c7; color: #92400e; }
+.ar-d-shipped    { background: #f3e8ff; color: #7c3aed; }
+.ar-d-delivered  { background: #d1fae5; color: #065f46; }
+.ar-d-cancelled  { background: #fee2e2; color: #991b1b; }
+
+/* ── Update delivery button ── */
+.ar-btn-update-delivery {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s; white-space: nowrap;
+}
+.ar-btn-update-delivery:hover { background: #dbeafe; }
+
+/* ── Modal (shared) ── */
+.ar-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px;
+}
+.ar-modal {
+  background: #fff; border-radius: 16px; width: 100%; max-width: 500px;
+  max-height: 90vh; overflow-y: auto; padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.ar-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;
+}
+.ar-modal-header h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 3px; }
+.ar-modal-subhead   { font-size: 0.82rem; color: #6b7280; margin: 0; }
+.ar-modal-close {
+  background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; flex-shrink: 0;
+}
+.ar-modal-close:hover { color: #111; }
+
+/* Address box inside delivery modal */
+.ar-delivery-addr-box {
+  background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 16px;
+}
+.ar-delivery-addr-title {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.82rem; font-weight: 700; color: #0369a1; margin: 0 0 6px;
+}
+.ar-delivery-addr-title svg { flex-shrink: 0; }
+.ar-delivery-addr-line { font-size: 0.82rem; color: #374151; margin: 0 0 2px; }
+
+/* Delivery select */
+.ar-delivery-select {
+  width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
+  border-radius: 9px; font-size: 0.9rem; outline: none; background: #fff;
+  cursor: pointer;
+}
+.ar-delivery-select:focus { border-color: #f59e0b; }
+
+/* Optional label */
+.ar-optional { font-size: 0.75rem; color: #9ca3af; font-weight: 400; margin-left: 4px; }
+
+/* Delivery modal actions */
+.ar-delivery-modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+.ar-btn-cancel-modal {
+  flex: 1; padding: 11px; background: #f3f4f6; color: #374151;
+  border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: background 0.15s;
+}
+.ar-btn-cancel-modal:hover { background: #e5e7eb; }
+
+.ar-form-error {
+  background: #fee2e2; color: #991b1b; padding: 8px 12px;
+  border-radius: 8px; font-size: 0.85rem; margin-bottom: 14px;
+}
+.ar-form-group { margin-bottom: 14px; }
+.ar-form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
+.ar-form-group input,
+.ar-form-group textarea,
+.ar-form-group select {
+  width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
+  border-radius: 9px; font-size: 0.9rem; box-sizing: border-box; outline: none;
+}
+.ar-form-group input:focus,
+.ar-form-group textarea:focus { border-color: #f59e0b; }
+.ar-req { color: #ef4444; }
+
+.ar-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.ar-toggle-group { margin-bottom: 18px; }
+.ar-toggle-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; }
+.ar-toggle-label input { accent-color: #f59e0b; width: 16px; height: 16px; }
+
+/* Image upload */
+.ar-img-upload { position: relative; cursor: pointer; }
+.ar-img-upload input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.ar-img-preview {
+  width: 100%; height: 150px; object-fit: cover; border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+}
+.ar-img-placeholder-sm {
+  width: 100%; height: 100px; border: 2px dashed #d1d5db; border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; color: #9ca3af; font-size: 0.82rem; background: #f9fafb;
+}
+
+.ar-btn-save {
+  width: 100%; padding: 12px; background: #f59e0b; color: #fff;
+  border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; margin-top: 4px; transition: background 0.15s;
+}
+.ar-btn-save--delivery {
+  flex: 2; width: auto; display: flex; align-items: center;
+  justify-content: center; gap: 7px; margin-top: 0;
+}
+.ar-btn-save:hover:not(:disabled) { background: #d97706; }
+.ar-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }

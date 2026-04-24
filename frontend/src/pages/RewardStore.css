@@ -1,0 +1,285 @@
+/* ── Reward Store Page ──────────────────────────────────── */
+.rs-page { padding: 32px 16px 60px; max-width: 1100px; margin: 0 auto; }
+
+.rs-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.6rem; font-weight: 700; color: #1a1a1a; margin-bottom: 20px;
+}
+.rs-title-icon { color: #f59e0b; }
+
+/* ── Points Banner ── */
+.rs-points-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, #fffbea, #fef3c7);
+  border: 1.5px solid #f5d94e; border-radius: 14px;
+  padding: 16px 20px; margin-bottom: 24px;
+}
+.rs-banner-star    { color: #f59e0b; flex-shrink: 0; }
+.rs-banner-balance { font-size: 1.3rem; font-weight: 800; color: #d97706; margin: 0; }
+.rs-banner-hint    { font-size: 0.82rem; color: #92400e; margin: 2px 0 0; }
+
+/* ── Tabs ── */
+.rs-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #f0f0f0; }
+.rs-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; background: none; border: none;
+  font-size: 0.92rem; font-weight: 600; color: #6b7280;
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: color 0.15s;
+}
+.rs-tab--active { color: #f59e0b; border-bottom-color: #f59e0b; }
+
+/* ── Grid ── */
+.rs-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.rs-card {
+  background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+.rs-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+.rs-card--locked { opacity: 0.75; }
+
+/* ── Card Image ── */
+.rs-card-img { position: relative; height: 165px; background: #f9f9f9; }
+.rs-card-img img { width: 100%; height: 100%; object-fit: cover; }
+.rs-img-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center;
+  justify-content: center; color: #d1d5db;
+}
+.rs-img-placeholder.sm { height: 64px; }
+
+.rs-out-of-stock {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.9rem; font-weight: 700;
+}
+.rs-locked-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(245,158,11,0.88);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 7px; color: #fff; font-size: 0.8rem; font-weight: 700;
+}
+
+/* ── Card Body ── */
+.rs-card-body { padding: 12px 14px 8px; flex: 1; }
+.rs-card-name  { font-size: 1rem; font-weight: 700; margin: 0 0 4px; color: #111; }
+.rs-card-desc  { font-size: 0.8rem; color: #6b7280; margin: 0 0 8px; }
+.rs-card-pts {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.88rem; color: #374151; margin-bottom: 4px;
+}
+.rs-pts-star   { color: #f59e0b; flex-shrink: 0; }
+.rs-card-stock { font-size: 0.78rem; color: #6b7280; margin: 0; }
+
+.rs-claim-msg {
+  margin: 0 14px 6px; font-size: 0.8rem; padding: 6px 10px; border-radius: 7px;
+}
+.rs-claim-msg--ok  { background: #d1fae5; color: #065f46; }
+.rs-claim-msg--err { background: #fee2e2; color: #991b1b; }
+
+/* ── Claim Button ── */
+.rs-btn-claim {
+  margin: 0 14px 14px; padding: 10px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff; border: none; border-radius: 10px;
+  font-weight: 700; font-size: 0.88rem; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.rs-btn-claim:hover:not(.rs-btn-claim--disabled) { opacity: 0.9; }
+.rs-btn-claim--disabled {
+  background: #e5e7eb; color: #9ca3af; cursor: not-allowed;
+}
+
+/* ── Empty ── */
+.rs-empty { text-align: center; padding: 60px 20px; color: #9ca3af; }
+.rs-empty svg { color: #d1d5db; margin-bottom: 12px; }
+.rs-empty p   { font-size: 0.95rem; margin: 0; }
+
+/* ── My Claims list ── */
+.rs-claims-list { display: flex; flex-direction: column; gap: 14px; }
+
+.rs-claim-card {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px;
+  padding: 16px;
+}
+.rs-claim-img { flex-shrink: 0; }
+.rs-claim-img img {
+  width: 70px; height: 70px; border-radius: 10px;
+  object-fit: cover; border: 1px solid #e5e7eb;
+}
+
+.rs-claim-info   { flex: 1; min-width: 0; }
+.rs-claim-name   { font-size: 0.95rem; font-weight: 700; margin: 0 0 3px; }
+.rs-claim-date   { font-size: 0.78rem; color: #6b7280; margin: 0 0 3px; }
+.rs-claim-pts    {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.8rem; color: #92400e; margin: 0 0 4px;
+}
+.rs-claim-addr    {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.78rem; color: #6b7280; margin: 0 0 3px;
+}
+.rs-claim-addr svg { flex-shrink: 0; color: #9ca3af; }
+.rs-claim-tracking {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.78rem; color: #374151; margin: 0 0 3px;
+}
+.rs-claim-tracking svg { flex-shrink: 0; color: #6366f1; }
+.rs-claim-note          { font-size: 0.78rem; color: #374151; margin: 4px 0 0; font-style: italic; }
+.rs-claim-cancel-reason { font-size: 0.78rem; color: #b91c1c; margin: 3px 0 0; }
+
+/* ── Right side of claim card ── */
+.rs-claim-right {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 8px; flex-shrink: 0;
+}
+
+/* ── Status badges ── */
+.rs-status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+}
+.rs-d-placed     { background: #eff6ff; color: #1d4ed8; }
+.rs-d-processing { background: #fef3c7; color: #92400e; }
+.rs-d-shipped    { background: #f3e8ff; color: #7c3aed; }
+.rs-d-delivered  { background: #d1fae5; color: #065f46; }
+.rs-d-cancelled  { background: #fee2e2; color: #991b1b; }
+
+/* ── Cancel claim button ── */
+.rs-btn-cancel-claim {
+  background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+  border-radius: 8px; padding: 5px 12px; font-size: 0.78rem;
+  font-weight: 600; cursor: pointer; transition: background 0.15s;
+  white-space: nowrap;
+}
+.rs-btn-cancel-claim:hover:not(:disabled) { background: #fee2e2; }
+.rs-btn-cancel-claim:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Delivery stepper ── */
+.rs-stepper {
+  display: flex; align-items: center; margin-top: 12px;
+  flex-wrap: nowrap; gap: 0;
+}
+.rs-step {
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0;
+}
+.rs-step-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #e5e7eb; border: 2px solid #d1d5db;
+  transition: background 0.2s, border-color 0.2s;
+}
+.rs-step--done  .rs-step-dot { background: #f59e0b; border-color: #f59e0b; }
+.rs-step--active .rs-step-dot {
+  background: #fff; border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.25);
+}
+.rs-step-label {
+  font-size: 0.65rem; color: #9ca3af; margin-top: 4px;
+  white-space: nowrap;
+}
+.rs-step--done .rs-step-label  { color: #d97706; }
+.rs-step--active .rs-step-label { color: #d97706; font-weight: 700; }
+
+.rs-step-line {
+  flex: 1; height: 2px; background: #e5e7eb;
+  margin-bottom: 16px; min-width: 18px; max-width: 40px;
+  transition: background 0.2s;
+}
+.rs-step-line--done { background: #f59e0b; }
+
+/* ── Claim Modal ── */
+.rs-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px;
+}
+.rs-modal {
+  background: #fff; border-radius: 18px; width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto; padding: 26px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+.rs-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.rs-modal-title {
+  display: flex; align-items: center; gap: 10px;
+}
+.rs-modal-icon { color: #f59e0b; flex-shrink: 0; }
+.rs-modal-title h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px; }
+.rs-modal-subtitle { font-size: 0.82rem; color: #6b7280; margin: 0; }
+.rs-modal-close {
+  background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px;
+  flex-shrink: 0;
+}
+.rs-modal-close:hover { color: #111; }
+
+.rs-modal-desc {
+  font-size: 0.85rem; color: #6b7280; margin: 0 0 16px;
+}
+.rs-modal-error {
+  background: #fee2e2; color: #991b1b; padding: 8px 12px;
+  border-radius: 8px; font-size: 0.85rem; margin-bottom: 14px;
+}
+
+/* ── Address form ── */
+.rs-addr-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.rs-addr-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.rs-addr-group label {
+  display: block; font-size: 0.82rem; font-weight: 600;
+  color: #374151; margin-bottom: 5px;
+}
+.rs-addr-group input {
+  width: 100%; padding: 9px 12px; border: 1.5px solid #d1d5db;
+  border-radius: 9px; font-size: 0.9rem; box-sizing: border-box; outline: none;
+}
+.rs-addr-group input:focus { border-color: #f59e0b; }
+.rs-req { color: #ef4444; }
+
+/* ── Points summary ── */
+.rs-modal-summary {
+  background: #fffbea; border: 1px solid #fde68a; border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 18px;
+}
+.rs-modal-summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.85rem; color: #374151;
+}
+.rs-modal-summary-row + .rs-modal-summary-row { margin-top: 6px; }
+.rs-modal-pts { color: #d97706; font-size: 1rem; }
+
+/* ── Modal actions ── */
+.rs-modal-actions {
+  display: flex; gap: 10px;
+}
+.rs-modal-btn-cancel {
+  flex: 1; padding: 11px; background: #f3f4f6; color: #374151;
+  border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: background 0.15s;
+}
+.rs-modal-btn-cancel:hover { background: #e5e7eb; }
+
+.rs-modal-btn-confirm {
+  flex: 2; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px; background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff; border: none; border-radius: 10px;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.rs-modal-btn-confirm:hover:not(:disabled) { opacity: 0.9; }
+.rs-modal-btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 500px) {
+  .rs-addr-row { grid-template-columns: 1fr; }
+  .rs-claim-card { flex-wrap: wrap; }
+  .rs-claim-right { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+  .rs-stepper { overflow-x: auto; }
+}
