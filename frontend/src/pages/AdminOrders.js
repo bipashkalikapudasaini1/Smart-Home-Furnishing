@@ -52,9 +52,8 @@ const AdminOrders = () => {
 
   // Delivery update modal state
   const [updateModal, setUpdateModal]     = useState(null); // { orderId, current }
-  const [newStatus, setNewStatus]         = useState('');
-  const [adminNote, setAdminNote]         = useState('');
-  const [trackingNum, setTrackingNum]     = useState('');
+  const [newStatus, setNewStatus] = useState('');
+  const [adminNote, setAdminNote] = useState('');
 
   useEffect(() => {
     if (authLoading) return;
@@ -89,7 +88,6 @@ const AdminOrders = () => {
     setUpdateModal({ orderId: order._id, current: order.deliveryStatus });
     setNewStatus(order.deliveryStatus);
     setAdminNote(order.adminNote || '');
-    setTrackingNum(order.trackingNumber || '');
   };
 
   const handleUpdateDelivery = async () => {
@@ -98,8 +96,7 @@ const AdminOrders = () => {
     try {
       await api.put(`/orders/admin/${updateModal.orderId}/delivery`, {
         deliveryStatus: newStatus,
-        adminNote,
-        trackingNumber: trackingNum
+        adminNote
       });
       setUpdateModal(null);
       fetchOrders();
@@ -263,7 +260,6 @@ const AdminOrders = () => {
                         <div className="ao-bill-row"><span>Delivery</span><span>Rs. {order.deliveryCharge?.toFixed(2)}</span></div>
                         <div className="ao-bill-row ao-bill-total"><span>Total</span><span>Rs. {order.totalAmount?.toFixed(2)}</span></div>
                         {order.khaltiTransactionId && <div className="ao-bill-row"><span>Khalti Txn ID</span><span className="txn-ref">{order.khaltiTransactionId}</span></div>}
-                        {order.trackingNumber && <div className="ao-bill-row"><span>Tracking No.</span><span>{order.trackingNumber}</span></div>}
                         {order.adminNote && <div className="ao-bill-row"><span>Admin Note</span><span>{order.adminNote}</span></div>}
                       </div>
                     </div>
@@ -298,11 +294,6 @@ const AdminOrders = () => {
                   <option key={s} value={s}>{DELIVERY_BADGE[s]?.label || s}</option>
                 ))}
               </select>
-            </div>
-
-            <div className="modal-field">
-              <label>Tracking Number (optional)</label>
-              <input value={trackingNum} onChange={e => setTrackingNum(e.target.value)} placeholder="e.g. NP123456789" />
             </div>
 
             <div className="modal-field">
