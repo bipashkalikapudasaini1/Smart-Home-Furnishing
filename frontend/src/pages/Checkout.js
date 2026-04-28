@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useFestival } from '../context/FestivalContext';
 import api from '../utils/api';
-import { ShoppingBag, MapPin, CreditCard, Package, Zap, Star } from 'lucide-react';
+import { ShoppingBag, MapPin, CreditCard, Package, Zap } from 'lucide-react';
 import './Checkout.css';
 
 const getImageUrl = (path) => {
@@ -16,6 +17,7 @@ const DELIVERY_CHARGE = 180;
 
 const Checkout = () => {
   const { user, loading: authLoading } = useAuth();
+  const { getFestivalDiscount }        = useFestival();
   const navigate    = useNavigate();
   const location    = useLocation();
 
@@ -24,12 +26,10 @@ const Checkout = () => {
   // Custom Order from live-chat confirmation
   const customOrderData = location.state?.customOrderData || null;
 
-  const [cart,           setCart]           = useState([]);
-  const [loading,        setLoading]        = useState(true);
-  const [submitting,     setSubmitting]     = useState(false);
-  const [error,          setError]          = useState('');
-  const [rewardPoints,   setRewardPoints]   = useState(0);
-  const [useRewards,     setUseRewards]     = useState(false);
+  const [cart,       setCart]       = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error,      setError]      = useState('');
 
   const [address, setAddress] = useState({
     name: '', phone: '', street: '', city: '', state: '', zipCode: '', country: 'Nepal'
@@ -40,11 +40,6 @@ const Checkout = () => {
     if (!user) { navigate('/login'); return; }
     if (user.name)  setAddress(prev => ({ ...prev, name:  user.name }));
     if (user.phone) setAddress(prev => ({ ...prev, phone: user.phone }));
-
-    // Fetch latest reward points from server
-    api.get('/auth/me').then(res => {
-      setRewardPoints(res.data?.data?.rewardPoints || 0);
-    }).catch(() => {});
 
     if (customOrderData || buyNow) {
       // Custom Order or Buy Now mode — no cart needed
@@ -58,28 +53,23 @@ const Checkout = () => {
       if (items.length === 0) { navigate('/cart'); return; }
       setCart(items);
     }).catch(() => setError('Failed to load cart')).finally(() => setLoading(false));
-  }, [user, authLoading, navigate, buyNow]);
+  }, [user, authLoading, navigate, buyNow, customOrderData]);
 
   // Subtotal: Custom Order = confirmed price, Buy Now = single item, normal = all cart items
   const subtotal = useMemo(() => {
     if (customOrderData) return Number(customOrderData.confirmedPrice) || 0;
     if (buyNow) return buyNow.price * buyNow.quantity;
     return cart.reduce((sum, item) => {
-      const price = item?.product?.discount
-        ? item.product.price - (item.product.price * item.product.discount) / 100
+      const festDiscount = getFestivalDiscount(item?.product?._id);
+      const discount     = festDiscount > 0 ? festDiscount : (item?.product?.discount || 0);
+      const price        = discount
+        ? Math.round(item.product.price - (item.product.price * discount) / 100)
         : item?.product?.price || 0;
       return sum + price * (item.quantity || 0);
     }, 0);
-  }, [customOrderData, buyNow, cart]);
+  }, [customOrderData, buyNow, cart, getFestivalDiscount]);
 
-  // Reward Points: user can redeem up to 50% of subtotal, min 50 points
-  const MIN_REDEEM      = 50;
-  const maxRedeemable   = Math.floor(subtotal * 0.5);
-  const pointsToRedeem  = useRewards ? Math.min(rewardPoints, maxRedeemable) : 0;
-  const rewardDiscount  = pointsToRedeem; // 1 point = Rs. 1
-  const canUseRewards   = rewardPoints >= MIN_REDEEM && maxRedeemable >= MIN_REDEEM;
-
-  const total = subtotal + DELIVERY_CHARGE - rewardDiscount;
+  const total = subtotal + DELIVERY_CHARGE;
 
   const handleChange = (e) =>
     setAddress(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -98,10 +88,6 @@ const Checkout = () => {
         payload.customOrderData = customOrderData; // live-chat confirmed custom order
       } else if (buyNow) {
         payload.buyNowItem = buyNow; // tell backend to skip cart
-      }
-      // Reward points not applicable for custom orders (price is already agreed)
-      if (!customOrderData && useRewards && pointsToRedeem >= MIN_REDEEM) {
-        payload.rewardPointsToRedeem = pointsToRedeem;
       }
       const res = await api.post('/orders', payload);
       const { khaltiPaymentUrl } = res.data.data;
@@ -242,44 +228,9 @@ const Checkout = () => {
                 })
               )}
             </div>
-            {/* ── Reward Points Section ── */}
-            {rewardPoints > 0 && (
-              <div className={`reward-box${!canUseRewards ? ' reward-box--disabled' : ''}`}>
-                <div className="reward-box-header">
-                  <Star size={16} className="reward-star" />
-                  <span className="reward-title">Your Reward Points</span>
-                  <span className="reward-balance">{rewardPoints} pts</span>
-                </div>
-                {canUseRewards ? (
-                  <label className="reward-toggle">
-                    <input
-                      type="checkbox"
-                      checked={useRewards}
-                      onChange={e => setUseRewards(e.target.checked)}
-                    />
-                    <span>
-                      Use {Math.min(rewardPoints, maxRedeemable)} points → save <strong>Rs. {Math.min(rewardPoints, maxRedeemable).toFixed(2)}</strong>
-                    </span>
-                  </label>
-                ) : (
-                  <p className="reward-hint">
-                    {rewardPoints < MIN_REDEEM
-                      ? `Need at least ${MIN_REDEEM} points to redeem. Keep shopping to earn more!`
-                      : `Minimum order subtotal required to use reward points.`}
-                  </p>
-                )}
-              </div>
-            )}
-
             <div className="checkout-totals">
               <div className="total-row"><span>Subtotal</span><span>Rs. {subtotal.toFixed(2)}</span></div>
               <div className="total-row"><span>Delivery Charge</span><span>Rs. {DELIVERY_CHARGE.toFixed(2)}</span></div>
-              {rewardDiscount > 0 && (
-                <div className="total-row reward-discount-row">
-                  <span>🎁 Reward Discount ({pointsToRedeem} pts)</span>
-                  <span>− Rs. {rewardDiscount.toFixed(2)}</span>
-                </div>
-              )}
               <div className="total-row grand-total"><span>Total</span><span>Rs. {total.toFixed(2)}</span></div>
             </div>
             <button type="submit" form="checkout-form" className="btn-khalti" disabled={submitting}>
