@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { productAPI, recommendationAPI } from "../utils/api";
-import { Star, Package, Pencil, ChevronDown, ChevronUp } from "lucide-react";
+import { Package, Pencil, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useFestival } from "../context/FestivalContext";
 import LiveChat from "../components/LiveChat";
 import SimilarProducts from "../components/SimilarProducts";
 import "./ProductDetail.css";
@@ -11,6 +12,7 @@ const ProductDetail = () => {
   const { id }       = useParams();
   const navigate     = useNavigate();
   const { user, isAdmin } = useAuth();
+  const { getFestivalDiscount } = useFestival();
 
   const [product,  setProduct]  = useState(null);
   const [loading,  setLoading]  = useState(true);
@@ -56,8 +58,12 @@ const ProductDetail = () => {
   if (error)   return <div className="product-detail-error">{error}</div>;
   if (!product) return null;
 
-  const finalPrice = product.discount
-    ? product.price - (product.price * product.discount) / 100
+  // Apply festival discount if this product is in the active festival, else use product's own discount
+  const festDiscount    = getFestivalDiscount(product._id);
+  const isFestival      = festDiscount > 0;
+  const appliedDiscount = isFestival ? festDiscount : (product.discount || 0);
+  const finalPrice      = appliedDiscount
+    ? Math.round(product.price - (product.price * appliedDiscount) / 100)
     : product.price;
 
   const decrement = () => quantity > 1 && setQuantity(q => q - 1);
@@ -159,15 +165,14 @@ const ProductDetail = () => {
           <p className="product-category">{product.category}</p>
           <p className="product-brand">{product.brand}</p>
 
-          <div className="product-rating">
-            <Star size={18} fill="#ffc107" stroke="#ffc107" />
-            <span>{product.ratings?.average?.toFixed(1) || "0.0"}</span>
-            <span className="rating-count">({product.ratings?.count || 0} reviews)</span>
-          </div>
-
           <div className="product-price">
-            {product.discount > 0 && <span className="original-price">NPR {product.price}</span>}
-            <span className="final-price">NPR {finalPrice.toFixed(0)}</span>
+            {appliedDiscount > 0 && (
+              <span className="original-price">NPR {product.price?.toLocaleString()}</span>
+            )}
+            {isFestival && (
+              <span className="festival-discount-tag">🎉 {appliedDiscount}% Festival OFF</span>
+            )}
+            <span className="final-price">NPR {finalPrice?.toLocaleString()}</span>
           </div>
 
           <p className="product-description">{product.description}</p>

@@ -47,6 +47,17 @@
   margin: 20px 0;
 }
 
+.festival-discount-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #b8860b, #ffd700);
+  color: #2d1a00;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-right: 10px;
+}
+
 .original-price {
   text-decoration: line-through;
   color: #999;
