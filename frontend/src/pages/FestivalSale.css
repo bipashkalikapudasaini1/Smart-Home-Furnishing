@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════════════════════════
+   Festival Sale Page
+   ═══════════════════════════════════════════════════════════════ */
+
+.festival-sale {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.festival-sale__hero {
+  position: relative;
+  padding: 60px 20px 50px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Colour themes — hero background */
+.festival-sale--gold  .festival-sale__hero { background: linear-gradient(135deg,#b8860b,#ffd700 40%,#ffec8b 60%,#b8860b); color:#4a2c00; }
+.festival-sale--red   .festival-sale__hero { background: linear-gradient(135deg,#8b0000,#dc143c 40%,#ff6b6b 60%,#8b0000); color:#fff5f5; }
+.festival-sale--green .festival-sale__hero { background: linear-gradient(135deg,#006400,#228b22 40%,#90ee90 60%,#006400); color:#f0fff0; }
+.festival-sale--purple .festival-sale__hero{ background: linear-gradient(135deg,#4b0082,#8a2be2 40%,#da70d6 60%,#4b0082); color:#f5f0ff; }
+.festival-sale--blue  .festival-sale__hero { background: linear-gradient(135deg,#003087,#1e5fbd 40%,#87ceeb 60%,#003087); color:#f0f8ff; }
+.festival-sale--orange .festival-sale__hero{ background: linear-gradient(135deg,#b8450c,#ff6500 40%,#ffaa33 60%,#b8450c); color:#fff8f0; }
+
+.festival-sale__confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(255,255,255,0.55);
+  top: calc(var(--i) * 5%);
+  left: calc(var(--i) * 5%);
+  border-radius: 2px;
+  animation: confettiFall calc(4s + var(--i) * 0.2s) ease-in-out infinite alternate;
+  transform: rotate(calc(var(--i) * 18deg));
+}
+
+@keyframes confettiFall {
+  from { transform: translateY(-20px) rotate(0deg);    opacity: 0.8; }
+  to   { transform: translateY(30px) rotate(360deg); opacity: 0.2; }
+}
+
+.festival-sale__hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.festival-sale__emoji-row {
+  font-size: 2.8rem;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.festival-sale__festival-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin: 0 0 6px;
+}
+
+.festival-sale__title {
+  font-size: 2.6rem;
+  font-weight: 900;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.festival-sale__subtitle {
+  font-size: 1rem;
+  margin: 0 0 16px;
+  opacity: 0.9;
+}
+
+.festival-sale__discount-pill {
+  display: inline-block;
+  padding: 8px 28px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 999px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Products ──────────────────────────────────────────────── */
+.festival-sale__products {
+  padding: 40px 20px;
+}
+
+.festival-sale__products-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.festival-sale__products-header h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.festival-sale__products-header p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.festival-sale__empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.festival-sale__empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.festival-sale__empty h3 {
+  font-size: 1.4rem;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.festival-sale__empty p {
+  color: #777;
+  margin: 0 0 24px;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .festival-sale__title   { font-size: 1.7rem; }
+  .festival-sale__emoji-row { font-size: 2rem; }
+}
