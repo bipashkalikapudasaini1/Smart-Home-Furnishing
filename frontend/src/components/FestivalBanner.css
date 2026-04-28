@@ -1,0 +1,271 @@
+/* ═══════════════════════════════════════════════════════════════
+   Festival Banner  —  full-width, sits between Navbar & content
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Wrapper ───────────────────────────────────────────────── */
+.fb-wrap {
+  position: relative;
+  width: 100%;
+  border-top:    2px solid #c53030;
+  border-bottom: 2px solid #c53030;
+  --fb-gold: #ffd700;
+  overflow: hidden;
+  animation: fbSlideIn 0.45s ease;
+  /* sits below sticky navbar (z-index 1000) */
+  z-index: 50;
+}
+
+@keyframes fbSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Decoration SVG layer (kites / lights / etc.) ──────────── */
+.fb-decor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ── Kite animations ───────────────────────────────────────── */
+.kite { transform-origin: center; }
+.k1 { animation: kiteSway 3.2s ease-in-out infinite; }
+.k2 { animation: kiteFloat 4s ease-in-out infinite 0.4s; }
+.k3 { animation: kiteSway 3.6s ease-in-out infinite 0.8s; }
+.k4 { animation: kiteFloat 3.8s ease-in-out infinite 1.2s; }
+.k5 { animation: kiteSway 4.2s ease-in-out infinite 0.3s; }
+.k6 { animation: kiteFloat 3.4s ease-in-out infinite 0.9s; }
+
+@keyframes kiteSway {
+  0%,100% { transform: translateY(0)   rotate(-5deg); }
+  50%      { transform: translateY(-6px) rotate( 5deg); }
+}
+@keyframes kiteFloat {
+  0%,100% { transform: translateY(0)   rotate( 4deg); }
+  50%      { transform: translateY(-8px) rotate(-4deg); }
+}
+
+/* ── Snowflake spin ────────────────────────────────────────── */
+.snowflake { display: inline-block; }
+.sf0 { animation: spin 6s linear infinite; }
+.sf2 { animation: spin 8s linear infinite reverse; }
+.sf5 { animation: spin 7s linear infinite 1s; }
+.sf8 { animation: spin 5s linear infinite reverse 2s; }
+@keyframes spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Inner content row ─────────────────────────────────────── */
+.fb-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  position: relative;
+  z-index: 1;
+  min-height: 68px;
+  padding-left: 19%;
+}
+
+/* ── Side decorations ──────────────────────────────────────── */
+.fb-side-emoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  animation: sidePop 2.8s ease-in-out infinite;
+  line-height: 1;
+}
+@keyframes sidePop {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.2) rotate(8deg); }
+}
+
+.fb-lantern {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  animation: sway 3s ease-in-out infinite;
+  transform-origin: top center;
+  line-height: 1;
+}
+.fb-lantern--flip { animation-delay: 0.8s; }
+@keyframes sway {
+  0%,100% { transform: rotate(-8deg); }
+  50%      { transform: rotate( 8deg); }
+}
+
+/* ── Dividers ──────────────────────────────────────────────── */
+.fb-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+/* ── Title ─────────────────────────────────────────────────── */
+.fb-title-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.fb-party-emoji {
+  font-size: 1.5rem;
+  animation: pop 2.5s ease-in-out infinite;
+}
+@keyframes pop {
+  0%,100% { transform: scale(1);    }
+  50%      { transform: scale(1.18); }
+}
+
+.fb-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--fb-gold, #ffd700);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+/* ── Discount ──────────────────────────────────────────────── */
+.fb-discount {
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: #e2d9f3;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fb-off {
+  color: #ff6b35;
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.fb-subtitle {
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+}
+
+/* ── Countdown ─────────────────────────────────────────────── */
+.fb-countdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.fb-countdown__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.fb-countdown__units {
+  display: flex;
+  gap: 5px;
+}
+
+.fb-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  padding: 4px 8px;
+  min-width: 38px;
+}
+
+.fb-unit__val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.fb-unit__label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Fallback badge (no end date) ──────────────────────────── */
+.fb-badge {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--fb-gold, #ffd700);
+  color: var(--fb-gold, #ffd700);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 5px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── CTA button ────────────────────────────────────────────── */
+.fb-cta {
+  flex-shrink: 0;
+  padding: 10px 22px;
+  background: var(--fb-gold, #ffd700);
+  color: #2d1a00;
+  font-weight: 800;
+  font-size: 0.93rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.2s, transform 0.15s;
+  letter-spacing: 0.3px;
+}
+.fb-cta:hover {
+  filter: brightness(1.12);
+  transform: scale(1.05);
+}
+
+/* ── Close button — inside .fb-inner, pushed to far right ──── */
+.fb-close {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.fb-close:hover { background: rgba(0,0,0,0.4); }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .fb-side-emoji, .fb-lantern { display: none; }
+  .fb-subtitle { display: none; }
+  .fb-title  { font-size: 1rem; }
+}
+
+@media (max-width: 680px) {
+  .fb-inner  { flex-wrap: wrap; justify-content: center; padding: 10px 0; gap: 10px; }
+  .fb-divider { display: none; }
+  .fb-title-block { justify-content: center; }
+  .fb-title  { font-size: 0.92rem; white-space: normal; text-align: center; }
+  .fb-discount { text-align: center; }
+  .fb-countdown { justify-content: center; }
+  .fb-unit   { min-width: 32px; padding: 3px 6px; }
+  .fb-unit__val { font-size: 0.95rem; }
+  .fb-close  { position: absolute; top: 8px; right: 8px; margin-left: 0; }
+}
