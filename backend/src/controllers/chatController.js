@@ -19,7 +19,7 @@ exports.startOrGetChat = async (req, res) => {
     let chat;
 
     if (customizationDetails && customizationDetails.trim()) {
-      // ── New customization request: always a fresh chat entry ──
+      // New customization request: always a fresh chat entry 
       // Fetch the product image so it appears inside the chat bubble
       const productDoc = await Product.findById(productId).select("images");
       const imageUrl   = productDoc?.images?.[0] || "";
@@ -47,7 +47,7 @@ exports.startOrGetChat = async (req, res) => {
         hasUnreadAdmin: true, // admin has an unread message immediately
       });
     } else {
-      // ── Plain chat start: reuse existing open chat or create a new one ──
+      //  Plain chat start: reuse existing open chat or create a new one 
       chat = await Chat.findOne({ userId, productId, status: "open" });
       if (!chat) {
         chat = await Chat.create({
@@ -69,7 +69,7 @@ exports.startOrGetChat = async (req, res) => {
   }
 };
 
-// ─── USER: Send a message ─────────────────────────────────────────────────────
+//  USER: Send a message 
 exports.sendUserMessage = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -103,7 +103,7 @@ exports.sendUserMessage = async (req, res) => {
   }
 };
 
-// ─── USER: Get chat messages (polling) ───────────────────────────────────────
+//  USER: Get chat messages (polling) 
 exports.getUserChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -131,7 +131,7 @@ exports.getUserChat = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Get all chats ────────────────────────────────────────────────────
+//  ADMIN: Get all chats 
 exports.getAllChats = async (req, res) => {
   try {
     const chats = await Chat.find({})
@@ -147,7 +147,7 @@ exports.getAllChats = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Get a single chat ─────────────────────────────────────────────────
+//  ADMIN: Get a single chat 
 exports.getAdminChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -172,7 +172,7 @@ exports.getAdminChat = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Reply to a chat ───────────────────────────────────────────────────
+//  ADMIN: Reply to a chat 
 exports.sendAdminMessage = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -206,7 +206,7 @@ exports.sendAdminMessage = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Delete a message ─────────────────────────────────────────────────
+//  ADMIN: Delete a message 
 exports.deleteMessage = async (req, res) => {
   try {
     const { chatId, messageId } = req.params;
@@ -237,7 +237,7 @@ exports.deleteMessage = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Delete entire chat ───────────────────────────────────────────────
+//  ADMIN: Delete entire chat 
 exports.deleteChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -254,7 +254,7 @@ exports.deleteChat = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Close a chat ──────────────────────────────────────────────────────
+//  ADMIN: Close a chat 
 exports.closeChat = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -274,7 +274,7 @@ exports.closeChat = async (req, res) => {
   }
 };
 
-// ─── ADMIN: Confirm custom order — set agreed price & notify user ─────────────
+//  ADMIN: Confirm custom order — set agreed price & notify user 
 // POST /api/chat/admin/:chatId/confirm-order
 // body: { agreedPrice: Number, adminNote?: String }
 exports.confirmCustomOrder = async (req, res) => {
