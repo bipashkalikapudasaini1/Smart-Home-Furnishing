@@ -73,6 +73,12 @@ const RewardStore = () => {
     if (authLoading) return;
     if (!user) { navigate('/login'); return; }
     loadAll();
+    // Re-fetch when user returns to this tab (catches stale points/stock from other sessions)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') loadAll();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [user, authLoading, navigate]); // eslint-disable-line
 
   const loadAll = async () => {
