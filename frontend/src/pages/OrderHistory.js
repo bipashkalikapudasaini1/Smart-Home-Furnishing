@@ -92,9 +92,13 @@ const OrderHistory = () => {
     try {
       await api.put(`/orders/${cancelModal}/cancel`, { reason: cancelReason || 'Cancelled by user' });
       setCancelModal(null);
-      // Refresh list
-      const res = await api.get('/orders/my');
-      setOrders(res.data?.data || []);
+      // Refresh list and reward points (backend restores points on cancel)
+      const [ordersRes, meRes] = await Promise.all([
+        api.get('/orders/my'),
+        api.get('/auth/me')
+      ]);
+      setOrders(ordersRes.data?.data || []);
+      setRewardPoints(meRes.data?.data?.rewardPoints || 0);
     } catch (err) {
       setCancelError(err.response?.data?.message || 'Failed to cancel order. Please try again.');
     } finally {
