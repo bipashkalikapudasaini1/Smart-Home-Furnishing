@@ -48,6 +48,12 @@
   font-weight: 600;
 }
 
+/* Festival discount badge — gold instead of red */
+.product-badge--festival {
+  background: linear-gradient(135deg, #b8860b, #ffd700);
+  color: #2d1a00;
+}
+
 .product-info {
   padding: 15px;
   flex: 1;
