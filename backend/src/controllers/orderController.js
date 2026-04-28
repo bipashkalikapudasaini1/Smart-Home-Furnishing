@@ -45,8 +45,25 @@ exports.createOrder = async (req, res) => {
     let isCustomOrder = false;
     let chatId = null;
 
+    // ── Fetch active festival once — used for Buy Now and Cart price calculation ──
+    const FestivalBanner = require('../models/FestivalBanner');
+    const activeFestival = await FestivalBanner.findOne({ isActive: true }).select('products discountPercent');
+    const festivalProductIds = new Set(
+      (activeFestival?.products || []).map(p => p.toString())
+    );
+    const festivalDiscount = Number(activeFestival?.discountPercent) || 0;
+
+    // Returns the correct unit price respecting festival discount (overrides product discount)
+    const calcUnitPrice = (product) => {
+      const inFestival  = festivalDiscount > 0 && festivalProductIds.has(product._id.toString());
+      const discount    = inFestival ? festivalDiscount : (product.discount || 0);
+      return discount
+        ? parseFloat((product.price - (product.price * discount) / 100).toFixed(2))
+        : product.price;
+    };
+
     if (customOrderData) {
-      // ── Custom Order from Live Chat confirmation ──────────────────────────
+      //  Custom Order from Live Chat confirmation 
       // The price was agreed in the chat; we use it directly (no discount logic).
       const Chat    = require('../models/Chat');
       const Product = require('../models/Product');
@@ -88,9 +105,7 @@ exports.createOrder = async (req, res) => {
         return res.status(400).json({ success: false, message: `"${product.name}" only has ${product.stock} unit(s) in stock` });
       }
 
-      const unitPrice = product.discount
-        ? parseFloat((product.price - (product.price * product.discount) / 100).toFixed(2))
-        : product.price;
+      const unitPrice = calcUnitPrice(product);
 
       items.push({
         product:        product._id,
@@ -126,9 +141,7 @@ exports.createOrder = async (req, res) => {
           });
         }
 
-        const unitPrice = p.discount
-          ? parseFloat((p.price - (p.price * p.discount) / 100).toFixed(2))
-          : p.price;
+        const unitPrice = calcUnitPrice(p);
 
         items.push({
           product:        p._id,
