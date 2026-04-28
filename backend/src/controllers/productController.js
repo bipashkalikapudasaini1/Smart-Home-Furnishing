@@ -58,7 +58,7 @@ exports.getProducts = async (req, res) => {
       query.availableFabrics = { $in: [fabric] };
     }
 
-    // ── Flexible multi-word search ────────────────────────────────────────
+    //  Flexible multi-word search 
     // Problem with MongoDB $text: it tokenises by whitespace, so "bed sheet"
     // never matches a product named "Bedsheet" (one token), and "bedsheet"
     // never matches "Bed Sheet" (two tokens).
@@ -108,7 +108,7 @@ exports.getProducts = async (req, res) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
-    // ── TF-IDF Re-ranking for search queries ─────────────────────────────────
+    //  TF-IDF Re-ranking for search queries 
     // When the user has typed a search query, re-rank the MongoDB results by
     // TF-IDF relevance score so that the most semantically relevant products
     // appear first rather than just the most recently added ones.
@@ -139,7 +139,7 @@ exports.getProducts = async (req, res) => {
       data: products
     });
 
-    // ── Background: log search & update searchCount on matched products ────
+    //  Background: log search & update searchCount on matched products 
     // This runs after the response is sent so the client is never delayed.
     if (search && search.trim()) {
       setImmediate(async () => {
