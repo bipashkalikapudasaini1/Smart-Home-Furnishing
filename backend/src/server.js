@@ -39,6 +39,7 @@ app.use('/api/chat',            require('./routes/chatRoutes'));
 app.use('/api/orders',          require('./routes/orderRoutes'));
 app.use('/api/rewards',         require('./routes/rewardRoutes'));
 app.use('/api/recommendations', require('./routes/recommendationRoutes'));
+app.use('/api/festival',        require('./routes/festivalRoutes'));
 
 // Health check route -> check to confirm server is running
 app.get('/api/health', (req, res) => {
