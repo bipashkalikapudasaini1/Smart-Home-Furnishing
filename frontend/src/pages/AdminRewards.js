@@ -139,8 +139,12 @@ const AdminRewards = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this reward item?')) return;
-    await api.delete(`/rewards/${id}`);
-    fetchItems();
+    try {
+      await api.delete(`/rewards/${id}`);
+      fetchItems();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete reward item.');
+    }
   };
 
   // ── Open delivery update modal ────────────────────────────────────────────
