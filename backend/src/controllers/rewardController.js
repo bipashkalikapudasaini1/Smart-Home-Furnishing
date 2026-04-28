@@ -6,7 +6,7 @@ const User        = require('../models/User');
 // POST /api/rewards
 exports.createRewardItem = async (req, res) => {
   try {
-    const { name, description, pointsRequired, stock } = req.body;
+    const { name, description, pointsRequired, stock, isActive } = req.body;
     if (!name || !pointsRequired) {
       return res.status(400).json({ success: false, message: 'Name and pointsRequired are required.' });
     }
@@ -17,7 +17,7 @@ exports.createRewardItem = async (req, res) => {
       image,
       pointsRequired: parseInt(pointsRequired),
       stock: stock !== undefined ? parseInt(stock) : -1,
-      isActive: true
+      isActive: isActive === 'false' || isActive === false ? false : true
     });
     res.status(201).json({ success: true, data: item });
   } catch (err) {
