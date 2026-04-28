@@ -119,4 +119,17 @@ export const recommendationAPI = {
   logCartAdd:  (productId) => api.post('/recommendations/log-cart-add', { productId }).catch(() => {}),
 };
 
+// Festival API
+export const festivalAPI = {
+  getAll:         ()          => api.get('/festival'),
+  getActive:      ()          => api.get('/festival/active'),
+  getById:        (id)        => api.get(`/festival/by-id/${id}`),
+  getProducts:    (id)        => api.get(`/festival/${id}/products`),
+  create:         (data)      => api.post('/festival', data),
+  update:         (id, data)  => api.put(`/festival/${id}`, data),
+  delete:         (id)        => api.delete(`/festival/${id}`),
+  addProduct:     (id, productId)            => api.post(`/festival/${id}/products`, { productId }),
+  removeProduct:  (id, productId)            => api.delete(`/festival/${id}/products/${productId}`),
+};
+
 export default api;
