@@ -56,6 +56,22 @@
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.35);
 }
 
+.btn-festival {
+  background: linear-gradient(135deg, #b8860b, #ffd700);
+  color: #2d1a00 !important;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.btn-festival:hover {
+  background: linear-gradient(135deg, #ffd700, #ffec8b);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
 .admin-table-container {
   background: white;
   border-radius: 12px;

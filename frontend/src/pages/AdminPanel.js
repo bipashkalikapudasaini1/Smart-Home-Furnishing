@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { productAPI } from "../utils/api";
-import { Plus, Edit, Trash2, X, MessageSquare, Upload } from "lucide-react";
+import { Plus, Edit, Trash2, X, MessageSquare, Upload, Sparkles } from "lucide-react";
 import "./AdminPanel.css";
 
 // Build a displayable URL for stored image paths like /uploads/products/...
@@ -26,6 +26,7 @@ const AdminPanel = () => {
   // ── Products state ────────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -67,10 +68,11 @@ const AdminPanel = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setFetchError("");
       const response = await productAPI.getAll({});
       setProducts(response.data.data);
     } catch (err) {
-      console.error("Failed to fetch products:", err);
+      setFetchError(err.response?.data?.message || "Failed to load products. Please refresh the page.");
     } finally {
       setLoading(false);
     }
@@ -232,12 +234,23 @@ const AdminPanel = () => {
               <MessageSquare size={20} />
               Manage Live Chats
             </Link>
+            <Link to="/admin/festival" className="btn btn-festival">
+              <Sparkles size={20} />
+             Add Festival Products
+            </Link>
             <button onClick={openAddModal} className="btn btn-primary">
               <Plus size={20} />
               Add New Product
             </button>
           </div>
         </div>
+
+        {fetchError && (
+          <div className="alert alert-error" style={{ margin: '16px 0' }}>
+            {fetchError}
+            <button style={{ marginLeft: 12, background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', fontWeight: 700 }} onClick={fetchProducts}>Retry</button>
+          </div>
+        )}
 
         {loading ? (
           <div className="loading">
