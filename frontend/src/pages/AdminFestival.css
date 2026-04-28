@@ -1,0 +1,421 @@
+/* ═══════════════════════════════════════════════════════════════
+   Admin Festival Page
+   ═══════════════════════════════════════════════════════════════ */
+
+.admin-festival {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.admin-festival__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.admin-festival__header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.admin-festival__header p {
+  color: #666;
+  margin: 0;
+}
+
+.admin-festival__header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Empty ─────────────────────────────────────────────────── */
+.admin-festival__empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+.admin-festival__empty h3 { font-size: 1.4rem; margin: 12px 0 8px; }
+.admin-festival__empty p  { color: #777; margin-bottom: 24px; }
+
+/* ── Loading ───────────────────────────────────────────────── */
+.admin-festival__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px;
+  gap: 12px;
+}
+
+/* ── Grid ──────────────────────────────────────────────────── */
+.admin-festival__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ── Festival Card ─────────────────────────────────────────── */
+.festival-card {
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  border: 2px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.festival-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+}
+
+.festival-card--active {
+  border-color: #22c55e;
+}
+
+/* Card theme accent lines */
+.festival-card--gold   { border-top: 4px solid #ffd700; }
+.festival-card--red    { border-top: 4px solid #dc143c; }
+.festival-card--green  { border-top: 4px solid #228b22; }
+.festival-card--purple { border-top: 4px solid #8a2be2; }
+.festival-card--blue   { border-top: 4px solid #1e5fbd; }
+.festival-card--orange { border-top: 4px solid #ff6500; }
+
+.festival-card__live {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #22c55e;
+  letter-spacing: 1px;
+}
+
+.festival-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.festival-card__emoji {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.festival-card__festival-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0 0 2px;
+}
+
+.festival-card__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 2px;
+}
+
+.festival-card__discount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e53e3e;
+  margin: 0;
+}
+
+.festival-card__subtitle {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 12px;
+}
+
+.festival-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #777;
+  margin-bottom: 14px;
+}
+
+.theme-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.theme-dot--gold   { background: #ffd700; }
+.theme-dot--red    { background: #dc143c; }
+.theme-dot--green  { background: #228b22; }
+.theme-dot--purple { background: #8a2be2; }
+.theme-dot--blue   { background: #1e5fbd; }
+.theme-dot--orange { background: #ff6500; }
+
+.festival-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Form ──────────────────────────────────────────────────── */
+.festival-modal {
+  width: 560px;
+  max-width: 95vw;
+  max-height: 90vh;
+  /* flex column so header is fixed, body scrolls, footer sticks */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.festival-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  overflow-y: auto;   /* only the form fields scroll */
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  /* sticky footer — pulled OUT of the scrollable form */
+  flex-shrink: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4f46e5;
+}
+
+.form-group--checkbox label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ── Preview ───────────────────────────────────────────────── */
+.festival-preview {
+  border-radius: 10px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 600;
+}
+
+.festival-preview--gold   { background: linear-gradient(135deg,#ffd700,#ffec8b); color:#4a2c00; }
+.festival-preview--red    { background: linear-gradient(135deg,#dc143c,#ff6b6b); color:#fff5f5; }
+.festival-preview--green  { background: linear-gradient(135deg,#228b22,#90ee90); color:#f0fff0; }
+.festival-preview--purple { background: linear-gradient(135deg,#8a2be2,#da70d6); color:#f5f0ff; }
+.festival-preview--blue   { background: linear-gradient(135deg,#1e5fbd,#87ceeb); color:#f0f8ff; }
+.festival-preview--orange { background: linear-gradient(135deg,#ff6500,#ffaa33); color:#fff8f0; }
+
+/* ── Product Modal ─────────────────────────────────────────── */
+.festival-products-modal {
+  width: 640px;
+  max-width: 95vw;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.festival-product-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #888;
+}
+
+.festival-product-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.festival-product-section {
+  padding: 16px 20px;
+}
+
+.festival-product-section h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.festival-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.festival-product-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  transition: background 0.15s;
+}
+
+.festival-product-row--added {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.festival-product-row img {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f3f4f6;
+}
+
+.festival-product-info {
+  flex: 1;
+}
+
+.festival-product-info p {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.festival-product-info span {
+  font-size: 0.78rem;
+  color: #666;
+}
+
+/* ── Buttons (reuse existing btn classes; add missing ones) ── */
+.btn-success {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+}
+.btn-success:hover { background: #16a34a; }
+
+.btn-warning {
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+}
+.btn-warning:hover { background: #d97706; }
+
+/* ── Modal base ────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 6px;
+}
+.modal-close:hover { background: #f3f4f6; }
+
+/* ── Alert reuse ───────────────────────────────────────────── */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.alert-error   { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+.alert-success { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+.alert button  { background:none; border:none; cursor:pointer; font-weight:700; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .admin-festival__header { flex-direction: column; }
+}
