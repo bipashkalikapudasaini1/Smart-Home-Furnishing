@@ -12,7 +12,8 @@
 .cart-meta { display:flex; flex-direction:column; gap:4px; }
 .cart-title { font-size: 16px; margin:0; }
 .cart-sub { font-size: 13px; opacity:0.8; margin:0; }
-.cart-price { font-weight:600; margin:0; }
+.cart-price { font-weight:600; margin:0; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.cart-original-price { font-size:12px; text-decoration:line-through; opacity:0.55; font-weight:400; }
 .cart-item-right { display:flex; align-items:center; gap:10px; }
 .qty-control { display:flex; align-items:center; gap:8px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 6px 8px; }
 .qty-btn { background: transparent; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; color: inherit; opacity:0.9; }

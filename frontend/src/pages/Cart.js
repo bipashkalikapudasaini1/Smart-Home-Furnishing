@@ -2,11 +2,24 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { useFestival } from '../context/FestivalContext';
 import { Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
 import './Cart.css';
 
+// Helper: get the correct per-item price respecting festival discount
+const getItemPrice = (item, getFestivalDiscount) => {
+  const product = item?.product;
+  if (!product) return 0;
+  const festDiscount = getFestivalDiscount(product._id);
+  const discount     = festDiscount > 0 ? festDiscount : (product.discount || 0);
+  return discount
+    ? Math.round(product.price - (product.price * discount) / 100)
+    : product.price;
+};
+
 const Cart = () => {
   const { user, loading: authLoading } = useAuth();
+  const { getFestivalDiscount }        = useFestival();
   const navigate = useNavigate();
 
   const [cart, setCart] = useState([]);
@@ -39,12 +52,10 @@ const Cart = () => {
 
   const subtotal = useMemo(() => {
     return (cart || []).reduce((sum, item) => {
-      const price = item?.product?.discount
-        ? item.product.price - (item.product.price * item.product.discount) / 100
-        : item?.product?.price || 0;
+      const price = getItemPrice(item, getFestivalDiscount);
       return sum + price * (item.quantity || 0);
     }, 0);
-  }, [cart]);
+  }, [cart, getFestivalDiscount]);
 
   const updateQty = async (cartItemId, quantity) => {
     try {
@@ -115,10 +126,10 @@ const Cart = () => {
                       {item.selectedFabric ? `  •  Fabric: ${item.selectedFabric}` : ''}
                     </p>
                     <p className="cart-price">
-                      ${(item.product?.discount
-                        ? (item.product.price - (item.product.price * item.product.discount) / 100)
-                        : (item.product?.price || 0)
-                      ).toFixed(2)}
+                      NPR {getItemPrice(item, getFestivalDiscount).toLocaleString()}
+                      {getItemPrice(item, getFestivalDiscount) < item.product?.price && (
+                        <span className="cart-original-price"> NPR {item.product.price?.toLocaleString()}</span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -154,7 +165,7 @@ const Cart = () => {
             <h3>Summary</h3>
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>Rs. {subtotal.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
@@ -162,7 +173,7 @@ const Cart = () => {
             </div>
             <div className="summary-row total">
               <span>Total</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>Rs. {subtotal.toFixed(2)}</span>
             </div>
 
             <button className="btn btn-primary checkout-btn" onClick={() => navigate('/checkout')}>
