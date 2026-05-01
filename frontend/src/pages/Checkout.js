@@ -102,6 +102,9 @@ const Checkout = () => {
 
   return (
     <div className="checkout-page container">
+      <button className="back-btn" onClick={() => customOrderData ? navigate('/my-customizations') : navigate('/cart')}>
+        ← Back
+      </button>
       <h2 className="checkout-title">
         {customOrderData
           ? <><CreditCard size={22} /> Custom Order Checkout</>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import './Auth.css';
 
@@ -18,10 +18,11 @@ const ForgotPassword = () => {
 
     try {
       const res = await authAPI.forgotPassword({ email });
-      setMsg(res.data.message || 'Code sent');
-      navigate('/reset-password', { state: { email } });
+      setMsg(res.data.message || 'Code sent to your email.');
+      // Only navigate after a short delay so user sees the success message
+      setTimeout(() => navigate('/reset-password', { state: { email } }), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -30,6 +31,7 @@ const ForgotPassword = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        <Link to="/login" className="auth-back-link">← Back to Login</Link>
         <h2 className="auth-title">Forgot Password</h2>
 
         {msg && <div className="alert alert-success">{msg}</div>}

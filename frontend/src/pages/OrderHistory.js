@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { Package, ChevronDown, ChevronUp, ShoppingBag, XCircle, Star } from 'lucide-react';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 import './OrderHistory.css';
 
 const getImageUrl = (path) => {
@@ -74,7 +75,14 @@ const OrderHistory = () => {
       .then(res => setOrders(res.data?.data || []))
       .catch(() => setError('Failed to load orders'))
       .finally(() => setLoading(false));
+    // Also refresh reward points silently
+    api.get('/auth/me').then(res => {
+      setRewardPoints(res.data?.data?.rewardPoints || 0);
+    }).catch(() => {});
   };
+
+  // Auto-refresh every 20 s + on tab focus so admin status changes appear instantly
+  useAutoRefresh(fetchOrders, 20_000);
 
   const toggleExpand = (id) => setExpanded(prev => prev === id ? null : id);
   const getStageIndex = (status) => DELIVERY_STAGES.findIndex(s => s.key === status);

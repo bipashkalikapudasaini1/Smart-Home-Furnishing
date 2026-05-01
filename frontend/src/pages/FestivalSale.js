@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { festivalAPI } from '../utils/api';
 import ProductCard from '../components/ProductCard';
@@ -21,31 +21,53 @@ const FestivalSale = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const wasActiveRef = useRef(false); // tracks whether festival was active on first load
+
+  const loadBanner = async (isInitial = false) => {
+    try {
+      if (isInitial) setLoading(true);
+      const bannerRes = await festivalAPI.getById(id);
+      const fetchedBanner = bannerRes.data.data;
+      if (!fetchedBanner) return;
+
+      // If festival is inactive: redirect to home
+      // On initial load → redirect immediately (no point landing on an ended sale)
+      // On re-poll → redirect only if it WAS active before (admin just deactivated it)
+      if (!fetchedBanner.isActive) {
+        if (isInitial || wasActiveRef.current) {
+          navigate('/', { replace: true });
+          return;
+        }
+      } else {
+        wasActiveRef.current = true; // mark that we saw it active at least once
+      }
+
+      setBanner(fetchedBanner);
+      setProducts(fetchedBanner.isActive ? (fetchedBanner.products || []) : []);
+    } catch (err) {
+      if (isInitial) setError('Failed to load festival sale. Please try again.');
+    } finally {
+      if (isInitial) setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        // Fetch this specific festival by ID — gives us discountPercent + all banner info
-        const bannerRes = await festivalAPI.getById(id);
-        if (bannerRes.data.data) {
-          const fetchedBanner = bannerRes.data.data;
-          setBanner(fetchedBanner);
-          // Only load products if the festival is still active
-          if (fetchedBanner.isActive) {
-            setProducts(fetchedBanner.products || []);
-          } else {
-            setProducts([]);
-          }
-        }
-      } catch (err) {
-        setError('Failed to load festival sale. Please try again.');
-      } finally {
-        setLoading(false);
-      }
+    loadBanner(true);
+
+    // Poll every 15 s — catches admin deactivating while user is browsing
+    const timer = setInterval(() => loadBanner(false), 15_000);
+
+    // Also re-check when user switches back to this tab
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') loadBanner(false);
     };
-    load();
-  }, [id]);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [id]); // eslint-disable-line
 
   const emoji = banner ? (FESTIVAL_EMOJIS[banner.festivalName] || '🎉') : '🎉';
   const displayName = banner
@@ -54,6 +76,11 @@ const FestivalSale = () => {
 
   return (
     <div className={`festival-sale festival-sale--${banner?.colorTheme || 'gold'}`}>
+      {/* ── Back button ─────────────────────────────── */}
+      <button className="festival-sale__back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
+
       {/* ── Hero Header ─────────────────────────────── */}
       <div className="festival-sale__hero">
         <div className="festival-sale__confetti">

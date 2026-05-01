@@ -59,11 +59,36 @@
 }
 
 @media (max-width: 480px) {
-  .auth-card {
-    padding: 30px 20px;
-  }
-
-  .auth-title {
-    font-size: 24px;
-  }
+  .auth-card    { padding: 28px 18px; }
+  .auth-title   { font-size: 22px; }
+  .btn-block    { font-size: 16px; padding: 11px; }
 }
+
+@media (max-width: 360px) {
+  .auth-container { padding: 20px 12px; }
+  .auth-card { padding: 22px 14px; border-radius: 8px; }
+  .auth-title { font-size: 20px; }
+}
+
+/* ── Password show/hide wrapper ─────────────────────────────────────────── */
+.pw-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pw-input-wrapper .form-control {
+  padding-right: 44px; /* make room for the eye button */
+}
+.pw-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+}
+.pw-toggle-btn:hover { color: #4b5563; }

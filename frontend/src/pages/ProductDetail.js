@@ -11,7 +11,7 @@ import "./ProductDetail.css";
 const ProductDetail = () => {
   const { id }       = useParams();
   const navigate     = useNavigate();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { getFestivalDiscount } = useFestival();
 
   const [product,  setProduct]  = useState(null);
@@ -70,6 +70,7 @@ const ProductDetail = () => {
   const increment = () => setQuantity(q => q + 1);
 
   const handleAddToCart = async () => {
+    if (authLoading) return;
     if (!user) { navigate("/login"); return; }
     try {
       await api.post("/cart/add", { productId: product._id, quantity, selectedColor: "", selectedSize: "", selectedFabric: "" });
@@ -82,6 +83,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
+    if (authLoading) return;
     if (!user) { navigate("/login"); return; }
     navigate("/checkout", {
       state: {
@@ -110,6 +112,7 @@ const ProductDetail = () => {
 
   // ── Send customization request through live chat ──────────────────────────
   const sendRequest = () => {
+    if (authLoading) return;
     if (!user) { navigate("/login"); return; }
 
     let sizeText = "";
@@ -147,6 +150,11 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
+
+      {/* ── Back button ───────────────────────────────────────────── */}
+      <button className="product-back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
 
       {/* ── Product card ──────────────────────────────────────────── */}
       <div className="product-detail-card">

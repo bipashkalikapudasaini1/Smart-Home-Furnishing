@@ -1,7 +1,7 @@
 .navbar {
   background-color: #2c3e50;
   color: white;
-  padding: 15px 0;
+  padding: 12px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -12,8 +12,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
+/* ── Brand ── */
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -22,62 +24,43 @@
   text-decoration: none;
   font-size: 20px;
   font-weight: 600;
+  flex-shrink: 0;
 }
+.navbar-brand:hover { color: #ecf0f1; }
 
-.navbar-brand:hover {
-  color: #ecf0f1;
-}
-
+/* ── Menu — always visible ── */
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 4px;
+  flex-wrap: nowrap;
 }
 
+/* ── Nav links ── */
 .nav-link {
   color: white;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 8px 12px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  transition: background-color 0.2s;
+  white-space: nowrap;
 }
-
-.nav-link:hover {
-  background-color: #34495e;
-}
-
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 12px;
-  background-color: #34495e;
-  border-radius: 5px;
-}
+.nav-link:hover { background-color: #34495e; }
 
 .navbar .btn {
   display: flex;
   align-items: center;
   gap: 5px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
-
-@media (max-width: 768px) {
-  .navbar-menu {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .navbar-brand span {
-    display: none;
-  }
-}
-
-/* ── Reward Points Badge in Navbar ── */
+/* ── Reward Points Badge ── */
 .nav-rewards-badge {
   display: inline-flex;
   align-items: center;
@@ -86,10 +69,11 @@
   color: #92400e;
   border: 1px solid #f5d94e;
   border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.8rem;
+  padding: 4px 10px;
+  font-size: 0.78rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .nav-rewards-badge:hover {
@@ -98,3 +82,87 @@
   color: #78350f;
 }
 .nav-rewards-badge svg { color: #f59e0b; }
+
+/* ── User / Profile link ── */
+.nav-user-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+  max-width: 140px;
+}
+.nav-user-link span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav-user-link:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════
+   MOBILE — show icons only, hide text labels
+════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar-brand-text { display: none; }
+
+  .nav-text { display: none; }
+
+  .nav-link {
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  /* Hide Home link on mobile — brand logo already goes to Home */
+  .nav-home-link { display: none; }
+
+  /* Bigger icons on mobile */
+  .nav-link svg { width: 26px; height: 26px; }
+
+  /* Rewards badge: show only the star, hide points text */
+  .nav-rewards-badge {
+    padding: 8px;
+    border-radius: 50%;
+  }
+  .nav-rewards-badge svg { width: 26px; height: 26px; }
+  .nav-rewards-badge span { display: none; }
+
+  /* Profile: show only avatar/icon */
+  .nav-user-link {
+    padding: 5px 6px;
+    max-width: none;
+  }
+  .nav-user-link svg { width: 26px; height: 26px; }
+  .nav-user-link span { display: none; }
+
+  .nav-avatar { width: 32px; height: 32px; }
+
+  .navbar .btn {
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-menu { gap: 2px; }
+  .nav-link { padding: 7px 6px; }
+  .navbar .btn { padding: 6px 8px; font-size: 0.78rem; }
+}
+
+@media (max-width: 360px) {
+  .navbar { padding: 10px 0; }
+  .nav-link { padding: 6px 5px; }
+}

@@ -90,6 +90,7 @@ const Cart = () => {
   return (
     <div className="cart-page container">
       <div className="cart-header">
+        <button className="back-btn" onClick={() => navigate(-1)}>← Continue Shopping</button>
         <h2>Your Cart</h2>
         {cart.length > 0 && (
           <button className="btn btn-secondary" onClick={clearCart}>

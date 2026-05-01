@@ -35,6 +35,19 @@
   .checkout-grid { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 600px) {
+  .checkout-page { padding: 20px 12px 40px; }
+  .checkout-title { font-size: 1.3rem; }
+  .checkout-card { padding: 18px 16px; }
+  .checkout-card h3 { font-size: 0.97rem; }
+  .btn-khalti { padding: 13px; font-size: 0.95rem; }
+}
+
+@media (max-width: 400px) {
+  .checkout-title { font-size: 1.15rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
 .checkout-card {
   background: #fff;
   border: 1px solid #e5e7eb;
