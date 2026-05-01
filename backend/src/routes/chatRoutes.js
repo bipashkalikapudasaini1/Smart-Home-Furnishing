@@ -5,6 +5,7 @@ const {
   startOrGetChat,
   sendUserMessage,
   getUserChat,
+  getMyCustomizations,
   getAllChats,
   getAdminChat,
   sendAdminMessage,
@@ -18,6 +19,9 @@ const {
 
 // POST /api/chat/start  → start or get existing chat for a product
 router.post("/start", protect, startOrGetChat);
+
+// GET /api/chat/my-customizations → all customization requests for logged-in user
+router.get("/my-customizations", protect, getMyCustomizations);
 
 // GET  /api/chat/:chatId       → get chat messages (polling)
 router.get("/:chatId", protect, getUserChat);
