@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import {
   ShoppingBag, Filter, ChevronDown, ChevronUp,
-  TrendingUp, Package, Clock, CheckCircle, Truck
+  TrendingUp, Package, Clock, CheckCircle, Truck, MessageSquare
 } from 'lucide-react';
 import './AdminOrders.css';
 
@@ -113,7 +113,13 @@ const AdminOrders = () => {
 
   return (
     <div className="admin-orders-page container">
-      <h2 className="ao-title"><ShoppingBag size={22} /> Order Management</h2>
+      <div className="ao-title-row">
+        <h2 className="ao-title"><ShoppingBag size={22} /> Order Management</h2>
+        <Link to="/admin/chats" className="btn btn-chat">
+          <MessageSquare size={20} />
+          Manage Live Chats
+        </Link>
+      </div>
 
       {/* ── Stats Cards ── */}
       <div className="ao-stats">
