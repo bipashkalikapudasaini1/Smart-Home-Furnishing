@@ -1,0 +1,115 @@
+/* ── Verify Email page extras ───────────────────────────────────────────── */
+
+.verify-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.verify-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.verify-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* ── OTP boxes ──────────────────────────────────────────────────────────── */
+.otp-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0 24px;
+}
+
+.otp-box {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  background: #f8fafc;
+  caret-color: #667eea;
+}
+
+.otp-box:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+  background: #fff;
+}
+
+.otp-box--filled {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+/* ── Resend row ─────────────────────────────────────────────────────────── */
+.resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.resend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.resend-btn:hover:not(:disabled) { color: #4f46e5; text-decoration: underline; }
+.resend-btn:disabled { color: #9ca3af; cursor: not-allowed; }
+
+/* ── Success card ───────────────────────────────────────────────────────── */
+.verify-success-card {
+  text-align: center;
+  padding: 48px 40px;
+}
+
+.verify-success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: #10b981;
+}
+
+/* ── Spin animation for resend icon ────────────────────────────────────── */
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .otp-box  { width: 40px; height: 48px; font-size: 18px; }
+  .otp-row  { gap: 6px; }
+}
