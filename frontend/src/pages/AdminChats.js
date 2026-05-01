@@ -253,8 +253,8 @@ const AdminChats = () => {
       {/* Page Header */}
       <div className="admin-chats-topbar">
         <div className="admin-chats-topbar-left">
-          <Link to="/admin" className="admin-back-link">
-            ← Admin Panel
+          <Link to="/admin/orders" className="admin-back-link">
+            ← Orders
           </Link>
           <h1>Live Chat Management</h1>
         </div>
