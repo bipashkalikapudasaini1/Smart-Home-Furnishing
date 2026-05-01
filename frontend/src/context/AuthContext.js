@@ -53,17 +53,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Registration no longer auto-logs-in — user must verify email first
   const register = async (name, email, password, phone) => {
     try {
       setError(null);
       const response = await authAPI.register({ name, email, password, phone });
-      const { token, ...userData } = response.data.data;
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-
-      return { success: true };
+      return {
+        success: true,
+        email: response.data.data?.email || email,
+        requiresVerification: response.data.data?.requiresVerification || true,
+      };
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed';
       setError(message);
@@ -81,6 +80,15 @@ export const AuthProvider = ({ children }) => {
     return user && user.role === 'admin';
   };
 
+  // Update local user state after profile edits / avatar upload
+  const updateUser = (updatedData) => {
+    setUser(prev => {
+      const merged = { ...prev, ...updatedData };
+      localStorage.setItem('user', JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   const value = {
     user,
     loading,
@@ -89,6 +97,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAdmin,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
