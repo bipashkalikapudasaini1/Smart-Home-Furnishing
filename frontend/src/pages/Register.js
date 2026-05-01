@@ -53,7 +53,7 @@ const Register = () => {
     );
 
     if (result.success) {
-      navigate('/');
+      navigate('/verify-email', { state: { email: result.email } });
     } else {
       setError(result.message);
     }
