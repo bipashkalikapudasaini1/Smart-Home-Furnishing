@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
+import { Eye, EyeOff } from 'lucide-react';
 import './Auth.css';
 
 const ResetPassword = () => {
@@ -13,6 +14,7 @@ const ResetPassword = () => {
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,14 +72,24 @@ const ResetPassword = () => {
 
           <div className="form-group">
             <label>New Password</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
+            <div className="pw-input-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="form-control"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="pw-toggle-btn"
+                onClick={() => setShowPassword(p => !p)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
