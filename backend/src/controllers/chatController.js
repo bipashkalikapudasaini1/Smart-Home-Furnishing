@@ -103,7 +103,25 @@ exports.sendUserMessage = async (req, res) => {
   }
 };
 
-//  USER: Get chat messages (polling) 
+// USER: Get all customization requests for the logged-in user
+exports.getMyCustomizations = async (req, res) => {
+  try {
+    const chats = await Chat.find({
+      userId: req.user._id,
+      customizationDetails: { $ne: '' }
+    })
+      .select('productId productName customizationDetails status confirmedPrice confirmedAt linkedOrderId createdAt')
+      .populate('productId', 'images')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: chats });
+  } catch (err) {
+    console.error('getMyCustomizations error:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+//  USER: Get chat messages (polling)
 exports.getUserChat = async (req, res) => {
   try {
     const { chatId } = req.params;
