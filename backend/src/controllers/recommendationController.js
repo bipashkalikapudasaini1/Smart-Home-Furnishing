@@ -124,6 +124,14 @@ exports.getForYou = async (req, res) => {
       products = await recommendationService.getPersonalisedRecommendations(req.user._id, limit);
     }
 
+    // If still empty (new user with no history), fall back to trending products (max 8)
+    if (!products || products.length === 0) {
+      products = await recommendationService.getTrendingProducts(Math.min(limit, 8));
+    }
+
+    // Always cap at 8 for new users with no real personalisation yet
+    products = products.slice(0, 8);
+
     res.status(200).json({
       success: true,
       count:   products.length,
