@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { productAPI } from "../utils/api";
-import { Plus, Edit, Trash2, X, MessageSquare, Upload, Sparkles } from "lucide-react";
+import { Plus, Edit, Trash2, X, Upload } from "lucide-react";
 import "./AdminPanel.css";
 
 // Build a displayable URL for stored image paths like /uploads/products/...
@@ -230,14 +230,6 @@ const AdminPanel = () => {
         <div className="admin-header">
           <h1>Admin Panel</h1>
           <div className="admin-header-actions">
-            <Link to="/admin/chats" className="btn btn-chat">
-              <MessageSquare size={20} />
-              Manage Live Chats
-            </Link>
-            <Link to="/admin/festival" className="btn btn-festival">
-              <Sparkles size={20} />
-             Add Festival Products
-            </Link>
             <button onClick={openAddModal} className="btn btn-primary">
               <Plus size={20} />
               Add New Product
