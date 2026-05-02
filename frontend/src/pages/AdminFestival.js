@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useFestival } from '../context/FestivalContext';
@@ -54,7 +54,6 @@ const AdminFestival = () => {
   const [success, setSuccess]         = useState('');
 
   // Product search for adding to festival
-  const [activeBannerId, setActiveBannerId]   = useState(null);
   const [productSearch, setProductSearch]     = useState('');
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedBannerForProducts, setSelectedBannerForProducts] = useState(null);
