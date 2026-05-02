@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  avatar: {
+    type: String,
+    default: ''
+  },
   address: {
     street: String,
     city: String,
@@ -40,6 +44,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+
+  // Email verification (OTP sent on registration)
+  isEmailVerified:     { type: Boolean, default: false },
+  emailVerifyCodeHash: { type: String, select: false },
+  emailVerifyExpires:  { type: Date },
 
   // ✅ Forgot password via email code (OTP)
   passwordResetCodeHash: { type: String, select: false },
