@@ -6,6 +6,7 @@ import {
   Star, Gift, CheckCircle, Clock, Truck, Package,
   MapPin, X, ShoppingBag, XCircle
 } from 'lucide-react';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 import './RewardStore.css';
 
 const API_BASE = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
@@ -69,18 +70,6 @@ const RewardStore = () => {
   // ── Cancel state ──────────────────────────────────────────────────────────
   const [cancellingId, setCancellingId] = useState(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) { navigate('/login'); return; }
-    loadAll();
-    // Re-fetch when user returns to this tab (catches stale points/stock from other sessions)
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') loadAll();
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [user, authLoading, navigate]); // eslint-disable-line
-
   const loadAll = async () => {
     setLoading(true);
     try {
@@ -95,6 +84,15 @@ const RewardStore = () => {
     } catch {}
     finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) { navigate('/login'); return; }
+    loadAll();
+  }, [user, authLoading, navigate]); // eslint-disable-line
+
+  // Auto-refresh every 30 s + on tab focus (picks up admin stock/item changes)
+  useAutoRefresh(loadAll, 30_000);
 
   // ── Open claim modal ──────────────────────────────────────────────────────
   const openClaimModal = (item) => {
