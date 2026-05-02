@@ -30,11 +30,19 @@ api.interceptors.request.use(
 
 // Auth API
 export const authAPI = {
-  register: (data) => api.post("/auth/register", data),
-  login: (data) => api.post("/auth/login", data),
-  getMe: () => api.get("/auth/me"),
-  forgotPassword: (data) => api.post("/auth/forgot-password", data),
-  resetPassword: (data) => api.post("/auth/reset-password", data),
+  register:       (data) => api.post("/auth/register", data),
+  login:          (data) => api.post("/auth/login", data),
+  getMe:          ()     => api.get("/auth/me"),
+  forgotPassword:      (data) => api.post("/auth/forgot-password", data),
+  resetPassword:       (data) => api.post("/auth/reset-password", data),
+  // Email verification
+  verifyEmail:         (data) => api.post("/auth/verify-email", data),
+  resendVerification:  (data) => api.post("/auth/resend-verification", data),
+  // Profile
+  updateProfile:  (data)     => api.put("/auth/update-profile", data),
+  changePassword: (data)     => api.put("/auth/change-password", data),
+  uploadAvatar:   (formData) => api.post("/auth/upload-avatar", formData),
+  deleteAccount:  (data)     => api.delete("/auth/delete-account", { data }),
 };
 
 // Product API
@@ -66,6 +74,8 @@ export const chatAPI = {
   // Send a message
   sendMessage: (chatId, text) =>
     api.post(`/chat/${chatId}/message`, { text }),
+  // Get all customization requests for the logged-in user
+  getMyCustomizations: () => api.get('/chat/my-customizations'),
 };
 
 // Chat API (Admin)
