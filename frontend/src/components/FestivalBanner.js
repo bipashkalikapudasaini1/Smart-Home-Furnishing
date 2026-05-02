@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { festivalAPI } from '../utils/api';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 import './FestivalBanner.css';
 
 /* ── Festival config ────────────────────────────────────── */
@@ -189,11 +190,19 @@ const FestivalBanner = () => {
   const navigate = useNavigate();
   const time = useCountdown(banner?.endDate);
 
-  useEffect(() => {
-    festivalAPI.getActive()
-      .then(res => { if (res.data.data) setBanner(res.data.data); })
-      .catch(() => {});
+  const fetchBanner = useCallback(async () => {
+    try {
+      const res = await festivalAPI.getActive();
+      const data = res.data.data;
+      // If festival was deactivated by admin, clear banner so it disappears
+      setBanner(data && data.isActive ? data : null);
+    } catch {}
   }, []);
+
+  useEffect(() => { fetchBanner(); }, [fetchBanner]);
+
+  // Poll every 60 s + on tab focus — auto-hides banner when admin deactivates festival
+  useAutoRefresh(fetchBanner, 60_000);
 
   if (!banner || !visible) return null;
 
