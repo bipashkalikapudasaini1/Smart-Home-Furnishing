@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { festivalAPI } from '../utils/api';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 
 const FestivalContext = createContext();
 
@@ -24,13 +25,10 @@ export const FestivalProvider = ({ children }) => {
 
   useEffect(() => {
     fetchActiveFestival();
-    // Re-fetch when user returns to the tab (catches admin deactivating mid-session)
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') fetchActiveFestival();
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [fetchActiveFestival]);
+
+  // Poll every 60 s + on tab focus — catches admin activating/deactivating mid-session
+  useAutoRefresh(fetchActiveFestival, 60_000);
 
   // Returns the festival discount % if this product is part of the active festival
   // Returns 0 if the product is not in the festival or no festival is active
