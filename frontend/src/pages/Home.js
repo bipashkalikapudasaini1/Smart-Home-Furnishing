@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import SearchRecommendations from '../components/SearchRecommendations';
 import ForYouSection from '../components/ForYouSection';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 import './Home.css';
 
 const Home = () => {
@@ -59,6 +60,9 @@ const Home = () => {
     fetchProducts();
     fetchFilterOptions();
   }, [fetchProducts, fetchFilterOptions]);
+
+  // Auto-refresh products every 60 s + on tab focus (picks up admin add/edit/delete)
+  useAutoRefresh(fetchProducts, 60_000);
 
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));
