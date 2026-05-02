@@ -23,6 +23,9 @@ import RewardStore from "./pages/RewardStore";
 import FestivalSale from "./pages/FestivalSale";
 import AdminFestival from "./pages/AdminFestival";
 import FestivalBanner from "./components/FestivalBanner";
+import Profile from "./pages/Profile";
+import VerifyEmail from "./pages/VerifyEmail";
+import MyCustomizations from "./pages/MyCustomizations";
 
 function App() {
   return (
@@ -52,6 +55,9 @@ function App() {
             <Route path="/rewards" element={<RewardStore />} />
             <Route path="/festival-sale/:id" element={<FestivalSale />} />
             <Route path="/admin/festival" element={<AdminFestival />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/my-customizations" element={<MyCustomizations />} />
           </Routes>
         </div>
         </FestivalProvider>
