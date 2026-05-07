@@ -42,6 +42,7 @@ const orderSchema = new mongoose.Schema({
 
   // Khalti payment details
   khaltiPidx:          { type: String, default: '' }, // Khalti payment identifier (pidx)
+  khaltiPaymentUrl:    { type: String, default: '' }, // Khalti redirect URL (stored to reuse)
   khaltiTransactionId: { type: String, default: '' }, // Khalti transaction_id after payment
   khaltiMobile:        { type: String, default: '' }, // payer's Khalti-registered mobile
 

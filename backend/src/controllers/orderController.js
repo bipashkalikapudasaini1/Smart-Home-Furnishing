@@ -40,6 +40,30 @@ exports.createOrder = async (req, res) => {
       });
     }
 
+    // ── Reuse existing pending order if created in last 15 min ──────────────
+    // Prevents "This payment is already initiated" error when user goes back
+    // from Khalti and tries to pay again.
+    const fifteenMinAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const existingPending = await Order.findOne({
+      user: req.user._id,
+      paymentStatus: 'pending',
+      khaltiPidx: { $ne: '' },
+      khaltiPaymentUrl: { $ne: '' },
+      createdAt: { $gte: fifteenMinAgo }
+    }).sort({ createdAt: -1 });
+
+    if (existingPending) {
+      return res.status(200).json({
+        success: true,
+        message: 'Resuming existing payment session…',
+        data: {
+          orderId:           existingPending._id,
+          khaltiPaymentUrl:  existingPending.khaltiPaymentUrl,
+          pidx:              existingPending.khaltiPidx
+        }
+      });
+    }
+
     const items = [];
     let subtotal = 0;
     let isCustomOrder = false;
@@ -236,7 +260,8 @@ exports.createOrder = async (req, res) => {
 
     const { pidx, payment_url } = khaltiRes.data;
 
-    order.khaltiPidx = pidx;
+    order.khaltiPidx       = pidx;
+    order.khaltiPaymentUrl = payment_url;
     await order.save();
 
     return res.status(201).json({
